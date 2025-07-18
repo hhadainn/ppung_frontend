@@ -28,14 +28,16 @@
 
 
 .test-background {
-  background-image: url('../assets/images/fart_background_example.png');
+//   background-image: url('../assets/images/fart_background_example.png');
+  background-image: url('../assets/images/fart_background_ex2.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   width: 100vw;
   height: 100vh;
   display: flex;
-  justify-content: center;
+  padding-left:20%;
+//   justify-content: center;
   align-items: center;
 }
 
@@ -44,11 +46,23 @@
   flex-direction: column;
   align-items: center;
   gap: 20px; // 메뉴 버튼 간 간격
+  div{
+	  font-family:'BMkkubulimTTF-Regular';
+  }
 }
 
+// .game-title {
+//   font-size: 25px;
+// //   font-weight: bold;
+//   font-family:"BMkkubulimTTF-Regular";
+// //   font-family:"BMKkubulimTTF";
+// //   color: white;
+// //   text-shadow: 2px 2px 4px #000000;
+// //   margin-bottom: 40px;
+// }
 .game-title {
-  font-size: 64px;
-//   font-weight: bold;
+  font-size: 80px;
+  font-weight: 200;
   font-family:"BMKkubulimTTF";
 //   color: white;
 //   text-shadow: 2px 2px 4px #000000;
@@ -71,3 +85,67 @@
 .menu-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
+.fart-bubble {
+	position: absolute;
+	bottom: 100px;
+	left: 13%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	animation: fart-rise 2.5s ease-out forwards;
+	z-index: 0;
+  }
+  
+  .fart-cloud-part {
+	background: #c8f7f2;
+	border-radius: 50%;
+	opacity: 0.9;
+	animation: puff 1s infinite alternate;
+  }
+  
+  .fart-cloud-part.big {
+	width: 120px;
+	height: 120px;
+  }
+  
+  .fart-cloud-part.medium {
+	width: 80px;
+	height: 80px;
+  }
+  
+  .fart-cloud-part.small {
+	width: 40px;
+	height: 40px;
+  }
+  
+  .fart-text {
+	font-size: 2rem;
+	color: #444;
+	opacity: 0;
+	animation: text-appear 2s ease 1.2s forwards;
+	font-weight: bold;
+  }
+  
+  /* 애니메이션 */
+  @keyframes fart-rise {
+	0% {
+	  transform: translateY(0) scale(0.3);
+	  opacity: 0.1;
+	}
+	100% {
+	  transform: translateY(-200px) scale(1);
+	  opacity: 1;
+	}
+  }
+  
+  @keyframes puff {
+	0% { transform: scale(1); }
+	100% { transform: scale(1.1); }
+  }
+  
+  @keyframes text-appear {
+	to {
+	  opacity: 1;
+	}
+  }
+  

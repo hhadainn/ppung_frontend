@@ -1,0 +1,91 @@
+// body{
+// 	background-color: #81cee8;
+//   }
+//   .main_window{
+// 	overflow: hidden;
+// 	display: block;
+// 	padding: 0;
+// 	margin: 0 auto;
+// 	width: 1256px;
+// 	height: 624px;
+// 	position: relative;
+//   }
+//   div{
+// 	margin: 0px;
+// 	padding: 0px;
+//   }
+// rgb(92, 46, 10) 갈색
+//rgb(220, 187, 138) 연갈색
+  .cloud{
+	width: 207px;
+	height: 89px;
+	flex-direction: column;
+	display:flex;
+	align-items: center;
+	justify-content: flex-end;
+	color:#fff;
+	background-color: rgb(220, 187, 138);   
+	border-radius: 40px;
+	position: absolute; 
+	transform-origin: center center;
+  	animation: cloudExpand 3s ease-out forwards, linemove 2s linear forwards;
+  	-webkit-animation: cloudExpand 3s ease-out forwards, linemove 2s linear forwards;
+  }
+  @keyframes cloudExpand {
+	0% {
+	  transform: scale(0.3);
+	  opacity: 0.1;
+	}
+	100% {
+	  transform: scale(3);
+	  opacity: 1;
+	}
+  }
+  
+  [data-type=white_5]:before{    
+	content: "";
+    display: block;
+    width: 50px;
+    height: 50px;
+	z-index:-1;
+    top: -20px;
+    left: 37px;
+    background-color: rgb(220, 187, 138);
+    border-radius: 30px;
+    position: absolute;
+	box-shadow: 7px -10px 0 16px rgb(220, 187, 138), 54px -19px 0 13px rgb(220, 187, 138), 99px -25px 0 -10px rgb(220, 187, 138), 29px 80px 0 22px rgb(220, 187, 138), 103px 82px 0 11px rgb(220, 187, 138), 116px 20px 0 19px rgb(220, 187, 138);
+  }
+  
+  @-webkit-keyframes linemove
+  {
+  from {left:0px;}
+  to {left:400px;}
+  }
+  @-moz-keyframes linemove
+  {
+  from {left:0px;}
+  to {left:400px;}
+  }
+  @-ms-keyframes linemove
+  {
+  from {left:0px;}
+  to {left:400px;}
+  }
+  @-o-keyframes linemove
+  {
+  from {left:0px;}
+  to {left:400px;}
+  }
+  @keyframes linemove
+  {
+  from {left:0px;}
+  to {left:400px;}
+  }
+  
+//   .cloud{
+// 	-webkit-animation-timing-function:linear;
+// 	-webkit-animation-iteration-count:infinite;
+// 	animation-timing-function:linear;
+// 	animation-iteration-count:infinite;
+// 	-webkit-animation-delay: -50s;
+//   }
