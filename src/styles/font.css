@@ -1,6 +1,6 @@
-@font-face{
-    font-family:"BMKkubulimTTF";
-    src:url("../assets/fonts/BMKkubulimTTF.ttf") format("Truetype");
+@font-face {
+    font-family: 'BMkkubulimTTF-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/BMkkubulimTTF-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
