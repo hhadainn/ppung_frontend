@@ -1,18 +1,18 @@
-import '../../styles/main.scss'
-const Test = () => {
-	return(
-		<div className='parent-box'>
-			<div className='child-box'>
-				자식1
-			</div>
-			<div className='child-box'>
-				자식2
-			</div>
-			<div className='child-box'>
-				자식3
-			</div>
-		</div>
-	)
-}
+import React from "react";
+import '../../styles/main.scss'; // SCSS import
 
-export default Test
+const Test = () => {
+  return (
+	<div className="test-background">
+		<div className="menu-container">
+			<h1 className="game-title">💨 방구를 뿌우웅</h1>
+			<div className="menu-button">시작하기</div>
+			<div className="menu-button">설정</div>
+			<div className="menu-button">제작진</div>
+			<div className="menu-button">종료</div>
+		</div>
+	</div>
+  );
+};
+
+export default Test;
