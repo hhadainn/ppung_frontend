@@ -1,0 +1,50 @@
+.login-container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   display: flex;
+  flex-direction: column;   // 세로 정렬
+  align-items: center;      // 가운데 정렬
+  gap: 10px;    // 요소 간 간격
+}
+
+.input-box {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.signup-link {
+  margin: 10px 0;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.login-button {
+  width: 95%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: -5px;
+  margin-bottom: 10px;
+}
+
+.login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

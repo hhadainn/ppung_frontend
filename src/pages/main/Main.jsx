@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../../styles/main.scss';
 
 // 이미지 import
-import board from '../../assets/images/board.png';
 import fartImg from '../../assets/images/fart_farting.png';
 import fart_standingImg from '../../assets/images/fart_standing.png';
 import coughImg from '../../assets/images/cough.png';
