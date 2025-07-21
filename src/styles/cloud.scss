@@ -28,20 +28,24 @@
 	border-radius: 40px;
 	position: absolute; 
 	transform-origin: center center;
-  	animation: cloudExpand 3s ease-out forwards, linemove 2s linear forwards;
-  	-webkit-animation: cloudExpand 3s ease-out forwards, linemove 2s linear forwards;
+	opacity:0.1;
+	left:50px;
+	transform: scale(0.7);
+	// animation: showCloud 0.5s ease-out 1s forwards, cloudExpand 3s ease-out 1s forwards, linemove 2s linear 1s forwards;
+	animation: cloudExpand 3s ease-out forwards, linemove 0.5s forwards ;
   }
-  @keyframes cloudExpand {
-	0% {
-	  transform: scale(0.3);
-	  opacity: 0.1;
-	}
-	100% {
-	  transform: scale(3);
-	  opacity: 1;
-	}
+  @keyframes linemove
+  {
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
-  
+
   [data-type=white_5]:before{    
 	content: "";
     display: block;
@@ -55,31 +59,77 @@
     position: absolute;
 	box-shadow: 7px -10px 0 16px rgb(220, 187, 138), 54px -19px 0 13px rgb(220, 187, 138), 99px -25px 0 -10px rgb(220, 187, 138), 29px 80px 0 22px rgb(220, 187, 138), 103px 82px 0 11px rgb(220, 187, 138), 116px 20px 0 19px rgb(220, 187, 138);
   }
+  @keyframes showCloud {
+	to {
+	  opacity: 1;
+	}
+  }
+  @keyframes cloudExpand {
+	0% {
+	  transform: scale(0.7);
+	  opacity: 0.1;
+	}
+	100% {
+	  transform: scale(3);
+	  opacity: 1;
+	}
+  }
+  
   
   @-webkit-keyframes linemove
   {
-  from {left:0px;}
-  to {left:400px;}
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
   @-moz-keyframes linemove
   {
-  from {left:0px;}
-  to {left:400px;}
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
   @-ms-keyframes linemove
   {
-  from {left:0px;}
-  to {left:400px;}
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
   @-o-keyframes linemove
   {
-  from {left:0px;}
-  to {left:400px;}
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
   @keyframes linemove
   {
-  from {left:0px;}
-  to {left:400px;}
+	from {
+			opacity:0.1;
+			left:50px;
+		}
+	to {
+			opacity:1;
+			left:400px;
+		}
   }
   
 //   .cloud{

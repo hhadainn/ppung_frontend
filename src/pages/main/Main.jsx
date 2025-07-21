@@ -6,7 +6,6 @@ import fartImg from '../../assets/images/fart_farting.png';
 import fart_standingImg from '../../assets/images/fart_standing.png';
 import coughImg from '../../assets/images/cough.png';
 import cough_standing from '../../assets/images/cough_stand.png';
-import students from '../../assets/images/students.png';
 
 
 const Main = () => {
