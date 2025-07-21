@@ -1,22 +1,75 @@
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
+import { Howl } from 'howler';
+import {useNavigate} from 'react-router-dom'
 import '../../styles/main.scss'; // SCSS import
 import '../../styles/cloud.scss'; // SCSS import
 import kimfart from '../../assets/images/kimfart.png'
+import clickSound from '../../assets/audio/proud-fart-288263.mp3'; // 경로 주의
 const Test = () => {
+	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
+	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
+	const indexRef = useRef(0);
+	const click = useRef(null);
+	const navigate = useNavigate()
+	const handleClick = () => {
+		setIsAnimation(true)
+		click.current = new Howl({ src: [clickSound] });
+		click.current.play()
+	}
+	const [isAnimation, setIsAnimation] = useState(false)
+	const [displayedText, setDisplayedText] = useState('')
+	const [displayedText2, setDisplayedText2] = useState('')
+	const [isTyping, setIsTyping] = useState('')
+	const [isButton, setIsButton] = useState(false)
+ 	const handleText = async() => {
+		const text = '방구를뿌우우웅~'
+		fullTextRef.current = text;
+		indexRef.current = 0
+
+		setDisplayedText('');
+		setIsTyping(true);
+		intervalRef.current = setInterval(() => {
+			if (indexRef.current < fullTextRef.current.length) {
+				if(indexRef.current > 2){
+					const nextChar = fullTextRef.current.charAt(indexRef.current);
+					setDisplayedText2((prev) => prev + nextChar);
+					indexRef.current += 1;
+				}
+				else{
+					const nextChar = fullTextRef.current.charAt(indexRef.current);
+					setDisplayedText((prev) => prev + nextChar);
+					indexRef.current += 1;
+				}
+			} else {
+				clearInterval(intervalRef.current);
+				setIsTyping(false);
+				setIsButton(true)
+			}
+		}, 250); // 속도는 원하는 대로 조정
+
+		return () => clearInterval(intervalRef.current);
+	}
+	useEffect(() => {
+		if(isAnimation) handleText()
+	}, [isAnimation]);
   return (
 	<div className="test-background">
-		<div className="menu-container">
-			<div style={{position:'relative', width:500, height:500, display:'flex', alignItems:'center',}}>
-				<img src={kimfart} className="character" alt="방구 캐릭터" />
-				<div class="cloud" data-type="white_5" style={{top: 250}} data-speed="41">
-					<div style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
-						방구를
+		<div className="menu-container" onClick={() => {if(!isAnimation) handleClick()}}>
+			{/* <div className={"start-item-conatiner " + (isAnimation ? 'start-item-conatiner-animation' : '')}> */}
+			<div className={"start-item-conatiner "}>
+				<img src={kimfart} className={'character ' + (isAnimation ? "start-item-conatiner-animation" : '')} alt="방구 캐릭터" />
+				{!isAnimation && <div className="twiggle-text">씰룩</div>}
+				{!isAnimation && <div className="twiggle-text2">씰룩</div>}
+				{isAnimation && 
+				<div class="cloud" data-type="white_5" style={{top: 250}}>
+					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
+						{displayedText}
 					</div>
-					<div style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
-						뿌우우웅~
+					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
+						{displayedText2}
 					</div>
-					<button style={{border:'1px solid rgb(145, 113, 69)', color:'rgb(145, 113, 69)', borderWidth:1, borderRadius:10, fontFamily:'BMKkubulimTTF', backgroundColor:'#fff'}}>Start</button>
-				</div>
+					{isButton && <button className="game-start-button" onClick={() => navigate('/playground')}>Start</button>}
+				</div>}
 			</div>
 			{/* <h1 className="game-title2">💨 방구를 뿌우웅</h1> */}
 			{/* <div className="menu-button">시작하기</div>
