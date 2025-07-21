@@ -9,12 +9,12 @@ const Test = () => {
 			<div style={{position:'relative', width:500, height:500, display:'flex', alignItems:'center',}}>
 				<img src={kimfart} className="character" alt="방구 캐릭터" />
 				<div class="cloud" data-type="white_5" style={{top: 250}} data-speed="41">
-					<p style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
+					<div style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
 						방구를
-					</p>
-					<p style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
+					</div>
+					<div style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
 						뿌우우웅~
-					</p>
+					</div>
 					<button style={{border:'1px solid rgb(145, 113, 69)', color:'rgb(145, 113, 69)', borderWidth:1, borderRadius:10, fontFamily:'BMKkubulimTTF', backgroundColor:'#fff'}}>Start</button>
 				</div>
 			</div>
