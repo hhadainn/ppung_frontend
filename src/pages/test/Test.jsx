@@ -1,11 +1,15 @@
 import React, {useState, useEffect, useRef} from "react";
 import { Howl } from 'howler';
 import {useNavigate} from 'react-router-dom'
+import { useBGMStore } from "../../store/backgroundSound";
 import '../../styles/main.scss'; // SCSS import
 import '../../styles/cloud.scss'; // SCSS import
 import kimfart from '../../assets/images/kimfart.png'
 import clickSound from '../../assets/audio/proud-fart-288263.mp3'; // 경로 주의
+import backgroundSound from '../../assets/audio/main_background.mp3'
 const Test = () => {
+	const setAudio = useBGMStore(state => state.setAudio)
+	const playBackgroundSound = useBGMStore(state => state.play)
 	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
 	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
 	const indexRef = useRef(0);
@@ -15,6 +19,7 @@ const Test = () => {
 		setIsAnimation(true)
 		click.current = new Howl({ src: [clickSound] });
 		click.current.play()
+		playBackgroundSound()
 	}
 	const [isAnimation, setIsAnimation] = useState(false)
 	const [displayedText, setDisplayedText] = useState('')
@@ -50,6 +55,11 @@ const Test = () => {
 		return () => clearInterval(intervalRef.current);
 	}
 	useEffect(() => {
+		const audio = new Audio(backgroundSound)
+		audio.loop = true;
+		setAudio(audio)
+	},[])
+	useEffect(() => {
 		if(isAnimation) handleText()
 	}, [isAnimation]);
   return (
@@ -68,7 +78,7 @@ const Test = () => {
 					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
 						{displayedText2}
 					</div>
-					{isButton && <button className="game-start-button" onClick={() => navigate('/playground')}>Start</button>}
+					{isButton && <button className="game-start-button" onClick={() => navigate('/main')}>Start</button>}
 				</div>}
 			</div>
 			{/* <h1 className="game-title2">💨 방구를 뿌우웅</h1> */}

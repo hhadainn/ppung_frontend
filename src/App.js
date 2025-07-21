@@ -14,6 +14,7 @@ function App() {
 			<Suspense>
 				<Routes>
 					<Route path='/' element={<Test/>}/>
+					<Route path='/main' element={<Main/>}/>
 					<Route path='/test' element={<Test/>}/>
 					<Route path='/playground' element={<Playground/>}/>
 					<Route path='/login' element={<Login/>}/>
