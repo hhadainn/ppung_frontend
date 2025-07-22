@@ -1,26 +1,19 @@
 import React, { useState, useRef } from 'react';
 import '../../styles/main.scss';
 
-// 이미지 import
-import fartImg from '../../assets/images/fart_farting.png';
-import fartPoop from '../../assets/images/fart_poop.png';
-import fartFailImg from '../../assets/images/fart_failed.png';
-import fart_standingImg from '../../assets/images/fart_standing.png';
-import coughImg from '../../assets/images/cough.png';
-import cough_standing from '../../assets/images/cough_stand.png';
-import {ReactComponent as FartWind} from '../../assets/images/fart_wind2.svg'
-import {ReactComponent as CaughSound} from '../../assets/images/caugh_sound.svg'
 import StartScreen from './components/StartScreen';
 import { useEffect } from 'react';
 import { useBGMStore } from "../../store/backgroundSound";
 import BlackScreen from './components/BlackScreen';
 import generateId from '../../utils/generateId';
 import bitSound from '../../assets/audio/background_bits.mp3'
+import introSound from '../../assets/audio/intro_background.mp3';
 import { useSearchParams } from 'react-router-dom';
 import { Howl } from 'howler';
 import sneezeSound from '../../assets/audio/sneeze.mp3'; // 경로 주의
 import failSound from '../../assets/audio/fail_effect.mp3'; // 경로 주의
 import successSound from '../../assets/audio/success_effect.mp3'; // 경로 주의
+import InGame from './components/InGame';
 const emojiTimings = [
 	7.5, 7.84, 8.18, 
 	11.26, 11.6, 11.94, 
@@ -44,269 +37,31 @@ const emojiTimings = [
 ];
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
-	const [currentIndex, setCurrentIndex] = useState(0)
-	const currentIndexRef = useRef(0)
-	const [whenFail, setWhenFail] = useState(false)
-	const [whenSuccess, setWhenSuccess] = useState(false)
-	const currentFailureTimer = useRef(null);
-	const queueRef = useRef([]);
-	const queueRef2 = useRef([]);
-	const queueRef3 = useRef([]);
-	const queueRef4 = useRef([]);
-	const startTimeRef = useRef(null);
+	const [tutorial, setTutorial] = useState(false)
 	const [searchParams, setSearchParams] = useSearchParams()
 	const play = searchParams.get('play')
-	const isProcessingRef = useRef(false);
-	const isProcessingRef2 = useRef(false);
-	const isProcessingRef3 = useRef(false);
-	const isProcessingRef4 = useRef(false);
-	const audioRef = useRef(null);
-	const timerRefs = useRef([]);
-	const successEffect = new Howl({ src: [successSound] });
-	const failEffect = new Howl({ src: [failSound] });
-	const [isCoughClicked, setIsCoughClicked] = useState(false);
-	const [sendList, setSendList] = useState([])
-	const [isFartClicked, setIsFartClicked] = useState(false);
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const setAudio = useBGMStore(state => state.setAudio)
 	const [isBackground, setIsBackground] = useState(true)
 	const [isBlackScreen, setIsBlackScreen] = useState(true)
 	const [isStart, setIsStart] = useState(false)
-	const processQueue = () => {
-		if (isProcessingRef.current || queueRef.current.length === 0) return;
-	
-		isProcessingRef.current = true;
-	
-		const task = queueRef.current.shift();
-		task(); // 실행: 2로 변경
-	
-		// 1로 복구된 후 다음 작업 실행
-		setTimeout(() => {
-		  isProcessingRef.current = false;
-		  processQueue(); // 다음 작업 실행
-		}, 100);
-	  };
-	const processQueue2 = () => {
-		if (isProcessingRef2.current || queueRef2.current.length === 0) return;
-	
-		isProcessingRef2.current = true;
-	
-		const task = queueRef2.current.shift();
-		task(); // 실행: 2로 변경
-	
-		// 1로 복구된 후 다음 작업 실행
-		setTimeout(() => {
-		  isProcessingRef2.current = false;
-		  processQueue2(); // 다음 작업 실행
-		}, 100);
-	  };
-	const processQueue3 = () => {
-		if (isProcessingRef3.current || queueRef3.current.length === 0) return;
-	
-		isProcessingRef3.current = true;
-	
-		const task = queueRef3.current.shift();
-		task(); // 실행: 2로 변경
-	
-		// 1로 복구된 후 다음 작업 실행
-		setTimeout(() => {
-		  isProcessingRef3.current = false;
-		  processQueue3(); // 다음 작업 실행
-		}, 100);
-	  };
-	const processQueue4 = () => {
-		if (isProcessingRef4.current || queueRef4.current.length === 0) return;
-	
-		isProcessingRef4.current = true;
-	
-		const task = queueRef4.current.shift();
-		task(); // 실행: 2로 변경
-	
-		// 1로 복구된 후 다음 작업 실행
-		setTimeout(() => {
-		  isProcessingRef4.current = false;
-		  processQueue4(); // 다음 작업 실행
-		}, 100);
-	  };
-	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
-		if(isStart){
-			const handleKeyDown = (e) => {
-				if(e.code === 'Space'){
-					const now = performance.now();
-					const elapsed = (now - startTimeRef.current) / 1000; 
-					const index = currentIndexRef.current;
-					const targetTime = emojiTimings[index] + 1.8;
-					const diff = Math.abs(elapsed - targetTime);
-					if (diff <= 0.15) {
-						successEffect.play();
-						queueRef4.current.push(() => {
-							setWhenSuccess(true);
-							setTimeout(() => setWhenSuccess(false), 150)
-						})
-						processQueue4();
-						if (currentFailureTimer.current) clearTimeout(currentFailureTimer.current); // ⛔ 중복 방지
-						currentIndexRef.current += 1;
-						setCurrentIndex((i) => i + 1);
-						scheduleNextFailure();
-					}
-					else {
-						failEffect.play();
-						queueRef3.current.push(() => {
-							setWhenFail(true);
-							setTimeout(() => setWhenFail(false), 150)
-						})
-						processQueue3();
-					}
-					queueRef.current.push(() => {
-						setIsFartClicked(true);
-						setTimeout(() => setIsFartClicked(false), 150)
-					})
-					processQueue();
-				}
-			}
-			window.addEventListener('keydown', handleKeyDown);
-			return () => window.removeEventListener('keydown', handleKeyDown);
-		}
-	},[isStart])
-	const scheduleNextFailure = () => { //timings 배열 마다 있는 시간 + 1.8초 후에 안눌리면 fail로직 발동시키고 index하나증가시켜서 다음 차례 시간 + 1.8초 검사할 수 있게 ㅅ케쥴링
-		const index = currentIndexRef.current;
-		if (index >= emojiTimings.length) return;
-	  
-		const now = performance.now();
-		const delay = (emojiTimings[index] + 1.8) * 1000 - (now - startTimeRef.current);
-	  
-		// ⛔ 기존 실패 예약 취소
-		if (currentFailureTimer.current) {
-		  clearTimeout(currentFailureTimer.current);
-		}
-	  
-		const timeout = setTimeout(() => {
-			failEffect.play();
-			queueRef3.current.push(() => {
-				setWhenFail(true);
-				setTimeout(() => setWhenFail(false), 150)
-			})
-			processQueue3();
-			currentIndexRef.current += 1;
-			setCurrentIndex((i) => i + 1);
-			scheduleNextFailure(); // 다음 실패 예약
-		}, delay + 150);
-	  
-		currentFailureTimer.current = timeout;
-	  };
-	
-	useEffect(() => {
-		if (sendList.length === 0) return;
-	
-		const lastEmoji = sendList[sendList.length - 1];
-		const timeout = setTimeout(() => {
-		  setSendList((prev) => prev.filter((e) => e.id !== lastEmoji.id));
-		}, 1950);
-	
-		return () => clearTimeout(timeout);
-	  }, [sendList]); //sendList는 재채기 파형리스트인데 넣어준애들을 일정 시간후에 하나씩 다시 뺴주는로직
 	useEffect(() => {
 		if(play === 'true'){
+			pauseBackgroundSound();
+			const audio = new Audio(introSound);
+			audio.play();
+			setAudio(audio);
 			setTimeout(() => {
 				setIsBackground(false)
-				pauseBackgroundSound();
 				setTimeout(() => {
 					setIsBlackScreen(false)
 					setIsStart(true)
 					searchParams.set('play', 'false')
 					setSearchParams(searchParams)
 				},1000)
-			}, 3000)
+			}, 5000)
 		}
 	},[play]) //화면 첫 렌더때 fart time 끄고 검은 배경 끄고 isStart 세팅 로직
-	useEffect(() => {
-		if (!isStart) return;
-	  
-		const audio = new Audio(bitSound);
-	  
-		audio.onplay = () => {
-		  // 기준 시간 기록
-		  startTimeRef.current = performance.now();
-		  scheduleNextFailure(); //첫 클릭 못했을때 실패 스케쥴
-	  
-		  // ✅ 이모티콘 타이밍
-		  emojiTimings.forEach((timeInSec) => {
-			const timeout = setTimeout(() => {
-				const effect = new Howl({ src: [sneezeSound] });
-				effect.play(); // 재채기 소리 켜는거
-		
-				queueRef2.current.push(() => {
-					setIsCoughClicked(true);
-					setTimeout(() => setIsCoughClicked(false), 150);
-				}); //재채기 모션 바꿨다가 다시 돌아오기
-				processQueue2();
-		
-				setSendList((prev) => [...prev, { id: generateId() }]);
-			}, timeInSec * 1000);
-			timerRefs.current.push(timeout);
-		  }); //재채기 소리, 재채기 파형 나가게 하기, 재채기 모션 바뀌고 돌아오게 하기
-	  
-		  // ✅ 화면 전환 타이밍
-		  const zoomSequence = [
-			[0, '1'],
-			[3.4, '2'],
-			[29.3, '3'],
-			[37.1, 'left1'],
-			[38.8, 'right1'],
-			[40.7, 'left1'],
-			[42.5, 'right1'],
-			[44.3, 'left1'],
-			[46.1, 'right1'],
-			[48.0, 'left1'],
-			[49.9, 'right1'],
-			[51.8, 'left1'],
-			[53.7, 'right1'],
-			[55.5, 'left1'],
-			[57.2, 'right1'],
-			[59.2, '2'],
-			[59.5, 'min0'],
-			[59.7, 'min1'],
-			[59.9, 'min2'],
-			[60.9, 'min3'],
-			[61.3, 'min4'],
-			[61.6, 'min5'], 
-			[62.8, 'left2'],
-			[66.4, 'right2'],
-			[70.2, 'right3'],
-			[73.9, 'flip'],
-			[77.6, 'left1'],
-			[79.4, 'right1'],
-			[81.4, 'left3'],
-			[83.2,'right4'],
-			[85.1, 'left1'],
-			[86.9, 'right1'],
-			[88.6, 'left4'],
-			[89.1, 'left5'],
-			[89.6, 'left6'],
-			[90.5, 'right5'],
-			[91.0, 'right6'],
-			[91.5, 'right7'],
-			[92.4, '2'],
-			[106.8, '1']
-			
-
-		
-		  ];
-	  
-		  zoomSequence.forEach(([delaySec, state]) => {
-			const timeout = setTimeout(() => setZoomState(state), delaySec * 1000);
-			timerRefs.current.push(timeout);
-		  });
-		};
-	  
-		audio.play().catch((err) => console.warn('autoplay blocked', err));
-		setAudio(audio);
-	  
-		return () => {
-		  timerRefs.current.forEach(clearTimeout);
-		//   audio.pause();
-		};
-	  }, [isStart]); //검은배경 꺼지고 isStart 세팅된 이후에 배경음악 켜지면서 그 시간초로 재채기 동기화 로직
 	return (
 		<>
 			<StartScreen 
@@ -320,64 +75,10 @@ const Main = () => {
 			/> 
 			<BlackScreen isBlackScreen={isBlackScreen}/> 
 			{/* 검은 화면 */}
-			<div 
-				className="viewport" 
-			>
-				<div className={`comic-board zoom-${zoomState}`}>
-					{/* 네 컷 위치 고정 */}
-					<div className="row top-row">
-						<div className='container'></div>
-						<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
-						{sendList.map(data => {
-							return(
-								<CaughSound key={data.id} className='caugh-sound fly-left2right'/>
-							)
-						})}
-						<div className="panel">
-							<img
-								className="bottom-left-image"
-								src={isCoughClicked ? coughImg : cough_standing}
-								alt="Cough Character"
-								// onClick={handleCoughClick}
-							/>
-							{isCoughClicked && 
-							<div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#0F0FB9', position:'absolute', left:180, bottom:120}}>
-								<p style={{margin:0}}>에</p>
-								<p style={{margin:0}}>취</p>
-							</div>}
-						</div>
-						<div className="panel">
-							<img
-								className="bottom-right-image"
-								src={whenFail ? fartFailImg : (whenSuccess ? fartImg : fart_standingImg)}
-								alt="Fart Character"
-								// onClick={handleFartClick}
-							/>
-							{whenFail && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:220, bottom:130}}>
-								<p style={{margin:0}}>뿌</p>
-								<p style={{margin:0}}>웅</p>
-							</div>}
-							{(whenFail) && 
-							<img
-								src={fartPoop}
-								className='poop-style'
-							/>
-							}
-							{isFartClicked && 
-								<FartWind
-									// src={fartWind}
-									style={{position:'absolute', right:200, bottom:45, height:100, width:100}}
-									// alt="fart wind"
-								/>
-							}
-						</div>
-					</div>
-					<div className="row bottom-row">
-						<div className="panel"></div>
-						<div className="panel"></div>
-					</div>
-				</div>
-			</div>
+			{tutorial
+			?	<></>
+			:	<InGame isStart={isStart} setIsStart={setIsStart} zoomState={zoomState} setZoomState={setZoomState}/>
+			}
 		</>
 	);
 };
