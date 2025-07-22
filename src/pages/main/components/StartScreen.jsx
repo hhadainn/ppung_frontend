@@ -1,8 +1,8 @@
 import classNames from "classnames"
 
-const StartScreen = ({isBackground}) => {
+const StartScreen = ({isBackground, onClick}) => {
 	return(
-		<div className={classNames('main-before-background', {'fade-out': !isBackground})}>
+		<div onClick={onClick} className={classNames('main-before-background', {'fade-out': !isBackground})}>
 			<div style={{display:'flex', flexDirection:'column', alignItems:'center', color:'rgb(178 103 103)'}}>
 				<div style={{fontSize:200, fontWeight:700}}>Fart</div>
 				<div style={{fontSize:200, fontWeight:700}}>Time!</div>

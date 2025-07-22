@@ -71,14 +71,14 @@ const Test = () => {
 				{!isAnimation && <div className="twiggle-text">씰룩</div>}
 				{!isAnimation && <div className="twiggle-text2">씰룩</div>}
 				{isAnimation && 
-				<div class="cloud" data-type="white_5" style={{top: 250}}>
+				<div className="cloud" data-type="white_5" style={{top: 250}}>
 					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
 						{displayedText}
 					</div>
 					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
 						{displayedText2}
 					</div>
-					{isButton && <button className="game-start-button" onClick={() => navigate('/main')}>Start</button>}
+					{isButton && <button className="game-start-button" onClick={() => navigate('/main?play=true')}>Start</button>}
 				</div>}
 			</div>
 			{/* <h1 className="game-title2">💨 방구를 뿌우웅</h1> */}

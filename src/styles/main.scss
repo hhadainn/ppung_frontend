@@ -64,7 +64,7 @@
   right: 30px;
   width: 190px;
   height: auto;
-  cursor: pointer;
+//   cursor: pointer;
 }
 
 .bottom-left-image {
@@ -73,7 +73,7 @@
   left: 50px;
   width: 150px;
   height: auto;
-  cursor: pointer;
+//   cursor: pointer;
 }
 
 .parent-box{
@@ -112,6 +112,26 @@
 
 	font-family:'BMkkubulimTTF-Regular';
 	align-items: center;
+}
+.caugh-sound{
+	position:absolute;
+	bottom:100px;
+}
+.fly-left2right{
+	animation: flyRight 1.5s linear forwards;
+}
+@keyframes flyRight{
+	0%{
+		transform:translateX(100px) scale(1);
+		opacity:1;
+	}
+	99%{
+		opacity:1;
+	}
+	100%{
+		transform:translateX(700px) scale(1);
+		opacity:0;
+	}
 }
 .viewport{
 	background-image: url('../assets/images/maru.png');
@@ -312,6 +332,10 @@
   .zoom-all, .zoom-null {
 	transform: translate(-70%, -10%) scale(1);
 	rotate:20deg;
+  }
+  .zoom-default{
+	transform: translate(-50.5%, -20%) scale(1.4);
+	rotate:0deg;
   }
 .main-black-screen{
 	width: 100vw;
