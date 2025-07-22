@@ -39,7 +39,6 @@ const emojiTimings = [
 	59.047, 59.247, 59.447,
 	62.7,63.04,63.38,63.58,
 	66.399
-
 ];
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
@@ -83,7 +82,7 @@ const Main = () => {
 		setTimeout(() => {
 		  isProcessingRef.current = false;
 		  processQueue(); // 다음 작업 실행
-		}, 150);
+		}, 100);
 	  };
 	const processQueue2 = () => {
 		if (isProcessingRef2.current || queueRef2.current.length === 0) return;
@@ -97,7 +96,7 @@ const Main = () => {
 		setTimeout(() => {
 		  isProcessingRef2.current = false;
 		  processQueue2(); // 다음 작업 실행
-		}, 150);
+		}, 100);
 	  };
 	const processQueue3 = () => {
 		if (isProcessingRef3.current || queueRef3.current.length === 0) return;
@@ -111,7 +110,7 @@ const Main = () => {
 		setTimeout(() => {
 		  isProcessingRef3.current = false;
 		  processQueue3(); // 다음 작업 실행
-		}, 150);
+		}, 100);
 	  };
 	const processQueue4 = () => {
 		if (isProcessingRef4.current || queueRef4.current.length === 0) return;
@@ -125,7 +124,7 @@ const Main = () => {
 		setTimeout(() => {
 		  isProcessingRef4.current = false;
 		  processQueue4(); // 다음 작업 실행
-		}, 150);
+		}, 100);
 	  };
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(isStart){
@@ -180,15 +179,15 @@ const Main = () => {
 		}
 	  
 		const timeout = setTimeout(() => {
-		  failEffect.play();
-		  queueRef3.current.push(() => {
-			  setWhenFail(true);
-			  setTimeout(() => setWhenFail(false), 150)
-		  })
-		  processQueue3();
-		  currentIndexRef.current += 1;
-		  setCurrentIndex((i) => i + 1);
-		  scheduleNextFailure(); // 다음 실패 예약
+			failEffect.play();
+			queueRef3.current.push(() => {
+				setWhenFail(true);
+				setTimeout(() => setWhenFail(false), 150)
+			})
+			processQueue3();
+			currentIndexRef.current += 1;
+			setCurrentIndex((i) => i + 1);
+			scheduleNextFailure(); // 다음 실패 예약
 		}, delay + 150);
 	  
 		currentFailureTimer.current = timeout;
@@ -363,11 +362,11 @@ const Main = () => {
 							/>
 							}
 							{isFartClicked && 
-							<FartWind
-								// src={fartWind}
-								style={{position:'absolute', right:200, bottom:45, height:100, width:100}}
-								// alt="fart wind"
-							/>
+								<FartWind
+									// src={fartWind}
+									style={{position:'absolute', right:200, bottom:45, height:100, width:100}}
+									// alt="fart wind"
+								/>
 							}
 						</div>
 					</div>
