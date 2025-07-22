@@ -19,6 +19,7 @@ function App() {
 					<Route path='/playground' element={<Playground/>}/>
 					<Route path='/login' element={<Login/>}/>
 					<Route path='/theme' element={<Theme/>}/>
+					<Route path='/main' element={<Main/>}/>
 				</Routes>
 			</Suspense>
 		</BrowserRouter>
