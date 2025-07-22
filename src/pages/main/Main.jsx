@@ -21,7 +21,6 @@ import failSound from '../../assets/audio/fail_effect.mp3'; // 경로 주의
 import successSound from '../../assets/audio/success_effect.mp3'; // 경로 주의
 const emojiTimings = [5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
 const clickTimings = [1.5, 3.0, 4.25, 6.0];
-const screenTimings = [5.0, 6.0, 7.0, 8.0]
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
 	const queueRef = useRef([]);
@@ -106,48 +105,20 @@ const Main = () => {
 			return () => window.removeEventListener('keydown', handleKeyDown);
 		}
 	},[isStart])
-	// useEffect(() => {
-	// 	if (currentIndex >= clickTimings.length) return;
-	  
-	// 	const now = performance.now();
-	// 	const delay = clickTimings[currentIndex] * 1000 - (now - startTimeRef.current);
-	  
-	// 	const timeout = setTimeout(() => {
-	// 	  failEffect.play(); // ⏱ 입력 없이 넘어감
-	// 	  setCurrentIndex((i) => i + 1);
-	// 	}, delay + 150); // +판정 유예 시간
-	  
-	// 	return () => clearTimeout(timeout);
-	//   }, [currentIndex]);
 	useEffect(() => {
-		if(isStart){
-			const audio = new Audio(bitSound)
-			audio.play()
-			startTimeRef.current = performance.now();
-			setAudio(audio)
-			emojiTimings.forEach((timeInSec) => {
-				const timeout = setTimeout(() => {
-    				const effect = new Howl({ src: [sneezeSound] });
-					effect.play();
-
-					queueRef2.current.push(() => {
-						setIsCoughClicked(true);
-						setTimeout(() => setIsCoughClicked(false), 150)
-					})
-					processQueue2();
-					setSendList((prev) => [
-						...prev,
-						{ id: generateId()},
-					]);
-				}, timeInSec * 1000);
-		  
-				timerRefs.current.push(timeout);
-			  });
-			return () => {
-				timerRefs.current.forEach(clearTimeout);
-			};
-		}
-	},[isStart])
+		if (currentIndex >= clickTimings.length) return;
+		if (!startTimeRef.current) return;
+		const now = performance.now();
+		const delay = clickTimings[currentIndex] * 1000 - (now - startTimeRef.current);
+	  
+		const timeout = setTimeout(() => {
+		  failEffect.play(); // ⏱ 입력 없이 넘어감
+		  setCurrentIndex((i) => i + 1);
+		}, delay + 150); // +판정 유예 시간
+	  
+		return () => clearTimeout(timeout);
+	  }, [currentIndex]);
+	
 	useEffect(() => {
 		if (sendList.length === 0) return;
 	
@@ -159,72 +130,78 @@ const Main = () => {
 		return () => clearTimeout(timeout);
 	  }, [sendList]);
 	useEffect(() => {
-		if(play){
+		if(play === 'true'){
 			setTimeout(() => {
 				setIsBackground(false)
 				pauseBackgroundSound();
 				setTimeout(() => {
 					setIsBlackScreen(false)
 					setIsStart(true)
-					searchParams.set('play', false)
+					searchParams.set('play', 'false')
 					setSearchParams(searchParams)
 				},1000)
 			}, 3000)
 		}
 	},[play])
-	// useEffect(() => {
-	// 	if(isStart){
-	// 		const onKeyDown = (e) => {
-	// 			if (e.code === 'Space') {
-	// 				const newItem = {
-	// 					id: generateId()
-	// 				}
-	// 				setSendList(prev => [...prev, newItem])
-	// 				setTimeout(() => {
-	// 					setSendList(prev => prev.filter(e => e.id != newItem.id))
-	// 				},1500)
-	// 			}
-	// 		};
-		
-	// 		window.addEventListener('keydown', onKeyDown);
-	// 		return () => window.removeEventListener('keydown', onKeyDown);
-	// 	}
-	// },[isStart])
 	useEffect(() => {
 		if (!isStart) return;
 	  
-		// [ [시간(초), 상태], ... ] 형태
-		const sequence = [
-		  [0, '1'],
-		  [1.5, '2'],
-		  [3.2, '3'],
-		  [4.2, 'left1'],
-		  [5.2, 'right1'],
-		  [6.2, 'min0'],
-		  [7.2, 'min1'],
-		  [8.2, 'min2']
-		];
+		const audio = new Audio(bitSound);
 	  
-		const startTime = performance.now();
-		const timers = [];
+		audio.onplay = () => {
+		  // 기준 시간 기록
+		  startTimeRef.current = performance.now();
 	  
-		sequence.forEach(([delaySec, state]) => {
-		  const timeout = setTimeout(() => {
-			setZoomState(state);
-		  }, delaySec * 1000);
+		  // ✅ 이모티콘 타이밍
+		  emojiTimings.forEach((timeInSec) => {
+			const timeout = setTimeout(() => {
+			  const effect = new Howl({ src: [sneezeSound] });
+			  effect.play();
 	  
-		  timers.push(timeout);
-		});
+			  queueRef2.current.push(() => {
+				setIsCoughClicked(true);
+				setTimeout(() => setIsCoughClicked(false), 150);
+			  });
+			  processQueue2();
 	  
-		return () => timers.forEach(clearTimeout);
+			  setSendList((prev) => [...prev, { id: generateId() }]);
+			}, timeInSec * 1000);
+			timerRefs.current.push(timeout);
+		  });
+	  
+		  // ✅ 화면 전환 타이밍
+		  const zoomSequence = [
+			[0, '1'],
+			[1.5, '2'],
+			[3.2, '3'],
+			[4.2, 'left1'],
+			[5.2, 'right1'],
+			[6.2, 'min0'],
+			[7.2, 'min1'],
+			[8.2, 'min2'],
+		  ];
+	  
+		  zoomSequence.forEach(([delaySec, state]) => {
+			const timeout = setTimeout(() => setZoomState(state), delaySec * 1000);
+			timerRefs.current.push(timeout);
+		  });
+		};
+	  
+		audio.play().catch((err) => console.warn('autoplay blocked', err));
+		setAudio(audio);
+	  
+		return () => {
+		  timerRefs.current.forEach(clearTimeout);
+		//   audio.pause();
+		};
 	  }, [isStart]);
 	return (
 		<>
 			<StartScreen 
 				isBackground={isBackground}
 				onClick={() =>{
-					if(!!!play && isBackground){
-						searchParams.set('play', true)
+					if(play !== 'true' && isBackground){
+						searchParams.set('play', 'true')
 						setSearchParams(searchParams)
 					}
 				}}/>
