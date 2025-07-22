@@ -21,7 +21,26 @@ import { Howl } from 'howler';
 import sneezeSound from '../../assets/audio/sneeze.mp3'; // 경로 주의
 import failSound from '../../assets/audio/fail_effect.mp3'; // 경로 주의
 import successSound from '../../assets/audio/success_effect.mp3'; // 경로 주의
-const emojiTimings = [7.5, 7.84, 8.18, 11.26, 11.6, 11.94, 14.9, 15.24, 15.58, 15.78, 18.6, 18.767, 18.934, 19.101, 19.268, 19.435, 22.2];
+const emojiTimings = [
+	7.5, 7.84, 8.18, 
+	11.26, 11.6, 11.94, 
+	14.9, 15.24, 15.58, 15.78,  
+	18.6, 18.767, 18.934, 19.101, 19.268, 19.468, 
+	22.2,22.54,22.88,23.08,
+	26.587,26.787, 27.127, 27.467,
+	29.716,30.217,30.417,
+	33.156,33.356,33.556,33.756,
+	36.849,37.049,37.249,37.449,37.669,
+	40.624,41.859,42.256,
+	44.336,44.676,45.016,45.216,
+	47.994,48.161, 48.328, 48.888, 49.055, 49.222,
+	51.656, 52.118, 52.712, 53.174,
+	55.317,55.484, 55.651, 55.818, 55.985, 56.185,
+	59.047, 59.247, 59.447,
+	62.7,63.04,63.38,63.58,
+	66.399
+
+];
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
 	const [currentIndex, setCurrentIndex] = useState(0)
@@ -108,7 +127,7 @@ const Main = () => {
 		  processQueue4(); // 다음 작업 실행
 		}, 150);
 	  };
-	useEffect(() => {
+	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(isStart){
 			const handleKeyDown = (e) => {
 				if(e.code === 'Space'){
@@ -148,7 +167,7 @@ const Main = () => {
 			return () => window.removeEventListener('keydown', handleKeyDown);
 		}
 	},[isStart])
-	const scheduleNextFailure = () => {
+	const scheduleNextFailure = () => { //timings 배열 마다 있는 시간 + 1.8초 후에 안눌리면 fail로직 발동시키고 index하나증가시켜서 다음 차례 시간 + 1.8초 검사할 수 있게 ㅅ케쥴링
 		const index = currentIndexRef.current;
 		if (index >= emojiTimings.length) return;
 	  
@@ -184,7 +203,7 @@ const Main = () => {
 		}, 1950);
 	
 		return () => clearTimeout(timeout);
-	  }, [sendList]);
+	  }, [sendList]); //sendList는 재채기 파형리스트인데 넣어준애들을 일정 시간후에 하나씩 다시 뺴주는로직
 	useEffect(() => {
 		if(play === 'true'){
 			setTimeout(() => {
@@ -198,7 +217,7 @@ const Main = () => {
 				},1000)
 			}, 3000)
 		}
-	},[play])
+	},[play]) //화면 첫 렌더때 fart time 끄고 검은 배경 끄고 isStart 세팅 로직
 	useEffect(() => {
 		if (!isStart) return;
 	  
@@ -207,46 +226,67 @@ const Main = () => {
 		audio.onplay = () => {
 		  // 기준 시간 기록
 		  startTimeRef.current = performance.now();
-		  scheduleNextFailure();
+		  scheduleNextFailure(); //첫 클릭 못했을때 실패 스케쥴
 	  
 		  // ✅ 이모티콘 타이밍
 		  emojiTimings.forEach((timeInSec) => {
 			const timeout = setTimeout(() => {
-			  const effect = new Howl({ src: [sneezeSound] });
-			  effect.play();
-	  
-			  queueRef2.current.push(() => {
-				setIsCoughClicked(true);
-				setTimeout(() => setIsCoughClicked(false), 150);
-			  });
-			  processQueue2();
-	  
-			  setSendList((prev) => [...prev, { id: generateId() }]);
+				const effect = new Howl({ src: [sneezeSound] });
+				effect.play(); // 재채기 소리 켜는거
+		
+				queueRef2.current.push(() => {
+					setIsCoughClicked(true);
+					setTimeout(() => setIsCoughClicked(false), 150);
+				}); //재채기 모션 바꿨다가 다시 돌아오기
+				processQueue2();
+		
+				setSendList((prev) => [...prev, { id: generateId() }]);
 			}, timeInSec * 1000);
 			timerRefs.current.push(timeout);
-		  });
+		  }); //재채기 소리, 재채기 파형 나가게 하기, 재채기 모션 바뀌고 돌아오게 하기
 	  
 		  // ✅ 화면 전환 타이밍
 		  const zoomSequence = [
 			[0, '1'],
 			[3.4, '2'],
-			[29.3,'3'],
-			[37.1,'left1'],
-			[38.8,'right1'],
-			[40.7,'left1'],
-			[42.5,'right1'],
-			[44.3,'left1'],
-			[46.1,'right1'],
-			[48.0,'left1'],
-			[49.9,'right1'],
-			[51.8,'left1'],
-			[53.7,'right1'],
-			[55.5,'left1'],
-			[57.2,'right1'],
+			[29.3, '3'],
+			[37.1, 'left1'],
+			[38.8, 'right1'],
+			[40.7, 'left1'],
+			[42.5, 'right1'],
+			[44.3, 'left1'],
+			[46.1, 'right1'],
+			[48.0, 'left1'],
+			[49.9, 'right1'],
+			[51.8, 'left1'],
+			[53.7, 'right1'],
+			[55.5, 'left1'],
+			[57.2, 'right1'],
 			[59.2, '2'],
-			[59.6, 'min0'],
-			[59.8, 'min1'],
-			[61.0, 'min2']
+			[59.5, 'min0'],
+			[59.7, 'min1'],
+			[59.9, 'min2'],
+			[60.9, 'min3'],
+			[61.3, 'min4'],
+			[61.6, 'min5'], 
+			[62.8, 'left2'],
+			[66.4, 'right2'],
+			[70.2, 'right3'],
+			[73.9, 'flip'],
+			[77.6, 'left1'],
+			[79.4, 'right1'],
+			[81.4, 'left3'],
+			[83.2,'right4'],
+			[85.1, 'left1'],
+			[86.9, 'right1'],
+			[88.6, 'left4'],
+			[89.1, 'left5'],
+			[89.6, 'left6'],
+			[90.5, 'right5'],
+			[91.0, 'right6'],
+			[91.5, 'right7'],
+			[92.4, '2'],
+			[106.8, '1']
 			
 
 		
@@ -265,7 +305,7 @@ const Main = () => {
 		  timerRefs.current.forEach(clearTimeout);
 		//   audio.pause();
 		};
-	  }, [isStart]);
+	  }, [isStart]); //검은배경 꺼지고 isStart 세팅된 이후에 배경음악 켜지면서 그 시간초로 재채기 동기화 로직
 	return (
 		<>
 			<StartScreen 
@@ -275,8 +315,10 @@ const Main = () => {
 						searchParams.set('play', 'true')
 						setSearchParams(searchParams)
 					}
-				}}/>
-			<BlackScreen isBlackScreen={isBlackScreen}/>
+				}} // fart time 화면
+			/> 
+			<BlackScreen isBlackScreen={isBlackScreen}/> 
+			{/* 검은 화면 */}
 			<div 
 				className="viewport" 
 			>
