@@ -1,7 +1,9 @@
 import '../../styles/login.scss';
 import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import url from '../../utils/backend';
+import digestPW from '../../utils/digestPw';
 const Main = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -9,8 +11,11 @@ const Main = () => {
     const [joinpassword, setjoinPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isMember, setIsMember] = useState(false);
+    const [code, setCode] = useState('');
+    const[name,setName]= useState('');
+    const navigate = useNavigate()
     const isPasswordValid = joinpassword.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(joinpassword);
-
+//get(가져온다), post(수정한다), put(생성한다, 추가한다), delete(삭제한다)
     const testServer = async() => {
         try{
             const res = await axios.get(url + '/user/test')
@@ -22,10 +27,52 @@ const Main = () => {
         }
     }
 
+     const createUser = async() => {
+        try{
+            const encryptedPW = await digestPW(joinpassword)
+            const res = await axios.put(url + '/user/create',{
+            email:joinusername, password:encryptedPW, name: name
+        })
+            console.log(res.data)
+            if (res.data.message == 'exist'){
+                alert('이미 존재합니다')
+            }
+            else {
+                alert('계정 생성 성공')
+                navigate('/main')
+            }
+            return res.data
+        }
+        catch(e){
+            console.log(e)
+        }
+    }
+
+
+         const login = async() => {
+        try{
+            const encryptedPW = await digestPW(password)
+            const res = await axios.post(url + '/user/login',{
+            email:username, password:encryptedPW
+        })
+            console.log(res.data)
+            if (res.data.message == 'success'){
+                alert('로그인 성공')
+                navigate('/main')
+            }
+            else {
+                alert('로그인 실패')
+            }
+            return res.data
+        }
+        catch(e){
+            console.log(e)
+        }
+    }
+
 
     const handleLogin = () => {
-        testServer()
-    // 로그인 처리 로직 나중에 여기에
+        login()
     console.log('로그인 시도:', username, password);
   };
 
@@ -34,12 +81,45 @@ const Main = () => {
   };
 
     const handleSignup = () => {
-        testServer()
+        createUser()
     // console.log('회원가입 완료:', joinusername, joinpassword);
   };
 
   const passwordsMatch = joinpassword === confirmPassword;
   const allFieldsFilled = joinusername && joinpassword && confirmPassword;
+  const verifyEmail= async () =>{
+    try{
+        const res = await axios.post(url+'/user/verify/email',{
+            email:joinusername
+        })
+        if(res.data.message == 'exist'){
+            alert('이미 발송했습니다.')
+        }
+        else{alert('이메일 발송 완료')}
+        return res.data       
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
+  const checkEmail= async () =>{
+    try{
+        const res = await axios.post(url+'/user/check/email',{
+            email:joinusername,
+            code: code
+        })
+        if(res.data.message == 'success'){
+            alert('인증 성공')
+        }
+        else {alert('인증 실패')}
+        return res.data       
+    }
+    catch(e){
+        console.log(e)
+    }
+  }
+
 
   return(
     <div className='login-container'>
@@ -49,11 +129,40 @@ const Main = () => {
 
           <input
             type="text"
-            placeholder="아이디"
+            placeholder="이름"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input-box"
+          />
+          
+          <input
+            type="text"
+            placeholder="이메일"
             value={joinusername}
             onChange={(e) => setjoinUsername(e.target.value)}
             className="input-box"
           />
+
+          <button onClick={verifyEmail}>
+            이메일 인증
+          </button>
+
+             <input
+            type="text"
+            placeholder="인증번호"
+            value={code}
+            onChange={(e) => {
+                let txt = e.target.value
+                txt = txt.replace(/[^0-9]/g, '');
+                setCode(txt)
+            }}
+            className="input-box"
+          />
+
+          <button onClick={checkEmail}>
+            인증번호 확인
+          </button>
+            
 
           <input
             type="password"
