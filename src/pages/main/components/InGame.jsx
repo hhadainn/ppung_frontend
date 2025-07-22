@@ -47,12 +47,18 @@ const emojiTimings = [
 	92.221, 93.084, 93.424, 93.99, 94.556,  //처음 치는 순간: 95.754
 	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
  ];
+const MAX_COUGH = 6;
 const InGame = ({zoomState, setZoomState, isStart}) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
+	const coughTimeoutRef = useRef(null); 
+	const [coughSlots, setCoughSlots] = useState(Array(MAX_COUGH).fill({ active: false, key: 0 }))
+	const coughSlotIndexRef = useRef(0);
+	let uniqueKeyCounter = useRef(0);
 	const [whenSuccess, setWhenSuccess] = useState(false)
 	const [tutorial, setTutorial] = useState(true)
+	const [coughList, setCoughList] = useState([{id:'cough_standing', img: cough_standing}])
 	const currentFailureTimer = useRef(null);
 	const queueRef = useRef([]);
 	const queueRef2 = useRef([]);
@@ -65,7 +71,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	const isProcessingRef4 = useRef(false);
 	const timerRefs = useRef([]);
 	const successEffect = new Howl({ src: [successSound] });
-	const effect = new Howl({ src: [sneezeSound] });
+	const effect = new Howl({ src: [sneezeSound], preload:true });
 	const failEffect = new Howl({ src: [failSound] });
 	const [isCoughClicked, setIsCoughClicked] = useState(false);
 	const [sendList, setSendList] = useState([])
@@ -97,7 +103,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 		setTimeout(() => {
 		  isProcessingRef2.current = false;
 		  processQueue2(); // 다음 작업 실행
-		}, 200);
+		}, 100);
 	  };
 	const processQueue3 = () => {
 		if (isProcessingRef3.current || queueRef3.current.length === 0) return;
@@ -194,16 +200,53 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	  
 		currentFailureTimer.current = timeout;
 	  };
-	useEffect(() => {
-		if (sendList.length === 0) return;
-	
-		const lastEmoji = sendList[sendList.length - 1];
-		const timeout = setTimeout(() => {
-		  setSendList((prev) => prev.filter((e) => e.id !== lastEmoji.id));
+	  const launchCoughEmoji = () => {
+		const slot = coughSlotIndexRef.current;
+		const key = uniqueKeyCounter.current++;
+	  
+		setCoughSlots(prev => {
+		  const newState = [...prev];
+		  newState[slot] = { active: true, key };
+		  return newState;
+		});
+	  
+		setTimeout(() => {
+		  setCoughSlots(prev => {
+			const newState = [...prev];
+			newState[slot] = { active: false, key };
+			return newState;
+		  });
 		}, 1950);
+	  
+		coughSlotIndexRef.current = (slot + 1) % MAX_COUGH;
+	  };
+	// useEffect(() => {
+	// 	if (sendList.length === 0) return;
 	
-		return () => clearTimeout(timeout);
-	  }, [sendList]); 
+	// 	const lastEmoji = sendList[sendList.length - 1];
+	// 	const timeout = setTimeout(() => {
+	// 	  setSendList((prev) => prev.filter((e) => e.id !== lastEmoji.id));
+	// 	}, 1950);
+	
+	// 	return () => clearTimeout(timeout);
+	//   }, [sendList]); 
+	  const triggerCough2 = () => {
+		effect.play();
+		setIsCoughClicked(true);
+		setTimeout(() => {
+		  setIsCoughClicked(false);
+		}, 150);
+	  };
+	  const triggerCough = () => {
+		const id = generateId(); // 고유 id 생성
+		effect.play();
+		setCoughList(prev => [...prev, {id: id, img: coughImg}]);
+	  
+		// 200ms 후 제거
+		setTimeout(() => {
+		  setCoughList(prev => prev.filter(item => item.id !== id));
+		}, 150);
+	  };
 	useEffect(() => {
 		if (!isStart) return;
 	  
@@ -218,18 +261,30 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 		  emojiTimings.forEach((timeInSec) => {
 			const timeout = setTimeout(() => {
 				effect.play(); // 재채기 소리 켜는거
-		
 				queueRef2.current.push(() => {
+					if (coughTimeoutRef.current) {
+						clearTimeout(coughTimeoutRef.current);
+					}
 					setIsCoughClicked(true);
-					setTimeout(() => setIsCoughClicked(false), 200);
+					coughTimeoutRef.current = setTimeout(() => {
+						setIsCoughClicked(false);
+						coughTimeoutRef.current = null;
+					}, 150);
 				}); //재채기 모션 바꿨다가 다시 돌아오기
 				processQueue2();
-		
-				setSendList((prev) => [...prev, { id: generateId() }]);
+				launchCoughEmoji();
+				// setSendList((prev) => [...prev, { id: generateId() }]);
 			}, timeInSec * 1000);
 			timerRefs.current.push(timeout);
 		  }); //재채기 소리, 재채기 파형 나가게 하기, 재채기 모션 바뀌고 돌아오게 하기
-	  
+			// const timeouts = emojiTimings.map((sec) => {
+			// 	setTimeout(() => {
+			// 		triggerCough();
+			// 		setSendList(prev => [...prev, {id: generateId()}])
+			// 	}, sec * 1000)
+			// })
+			// timerRefs.current = timeouts
+
 		  // ✅ 화면 전환 타이밍
 		  const zoomSequence = [
 			[0, '1'],
@@ -300,12 +355,24 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 				<div className="row top-row">
 					<div className='container'></div>
 					<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
-					{sendList.map(data => {
+					{coughSlots.map(({active, key}, i) => {
+						if(!active) return null
+						return(
+							<CaughSound key={key} className='caugh-sound fly-left2right'/>
+						)
+					})}
+					{/* {sendList.map(data => {
 						return(
 							<CaughSound key={data.id} className='caugh-sound fly-left2right'/>
 						)
-					})}
+					})} */}
 					<div className="panel">
+							{/* <img
+								className="bottom-left-image"
+								src={coughList.at(-1)?.img}
+								alt="Cough Character"
+								// onClick={handleCoughClick}
+							/> */}
 						<img
 							className="bottom-left-image"
 							src={isCoughClicked ? coughImg : cough_standing}
