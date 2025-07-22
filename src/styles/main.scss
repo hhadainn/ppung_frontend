@@ -60,18 +60,18 @@
 
 .bottom-right-image {
   position: absolute;
-  bottom: 50px;
-  right: 50px;
-  width: 200px;
+  bottom: -10px;
+  right: -25px;
+  width: 190px;
   height: auto;
   cursor: pointer;
 }
 
 .bottom-left-image {
   position: absolute;
-  bottom: 50px;
-  left: 50px;
-  width: 200px;
+  bottom: -10px;
+  left: -10px;
+  width: 150px;
   height: auto;
   cursor: pointer;
 }
@@ -150,6 +150,8 @@
 	grid-template-columns: 2fr 3fr; /* 아래는 2:3 */
   }
 .panel {
+	position:relative;
+	overflow: hidden;
 	border: 2px solid #000;
 	z-index: 20;
 	display: flex;

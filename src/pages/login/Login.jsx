@@ -13,7 +13,7 @@ const Main = () => {
 
     const testServer = async() => {
         try{
-            const res = await axios.get(url + '/')
+            const res = await axios.get(url + '/user/test')
             console.log(res.data)
             return res.data
         }

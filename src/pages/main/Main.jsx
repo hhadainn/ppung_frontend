@@ -61,9 +61,23 @@ const Main = () => {
 					{/* 네 컷 위치 고정 */}
 					<div className="row top-row">
 						<div className='container'></div>
-						<div style={{position:'absolute', left:'50%', width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
-						<div className="panel"></div>
-						<div className="panel"></div>
+						<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
+						<div className="panel">
+							<img
+								className="bottom-left-image"
+								src={isCoughClicked ? cough_standing : coughImg}
+								alt="Cough Character"
+								onClick={handleCoughClick}
+							/>
+						</div>
+						<div className="panel">
+							<img
+								className="bottom-right-image"
+								src={isFartClicked ? fart_standingImg : fartImg}
+								alt="Fart Character"
+								onClick={handleFartClick}
+							/>
+						</div>
 					</div>
 					<div className="row bottom-row">
 						<div className="panel"></div>
@@ -71,22 +85,6 @@ const Main = () => {
 					</div>
 				</div>
 			</div>
-			{/* <div className="container">
-				<div style={{position:"absolute", top:0, bottom: 0, width:30, borderLeft:'2px solid #000',backgroundColor:'#f1f3df', borderRight:'2px solid #000', zIndex:10}}></div>
-				<div style={{position:"absolute", bottom: 0, width:'100%', borderTop:'2px solid #000',backgroundColor:'#f1f3df', borderBottom:'2px solid #000', height:30, zIndex:10}}></div>
-				<img
-					className="bottom-left-image"
-					src={isCoughClicked ? cough_standing : coughImg}
-					alt="Cough Character"
-					onClick={handleCoughClick}
-				/>
-				<img
-					className="bottom-right-image"
-					src={isFartClicked ? fart_standingImg : fartImg}
-					alt="Fart Character"
-					onClick={handleFartClick}
-				/>
-			</div> */}
 		</>
 	);
 };
