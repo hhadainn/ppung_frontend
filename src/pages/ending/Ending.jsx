@@ -38,6 +38,7 @@ const Ending = () => {
   };
 
   return (
+    
     <div className="ending-container fade-in">
        <div className={`ending-content ${animationClass}`}>
             <p className="ending-text">{message}</p>

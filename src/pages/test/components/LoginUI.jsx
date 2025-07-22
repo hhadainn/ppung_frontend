@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import url from '../../../utils/backend';
+import { useBGMStore } from "../../../store/backgroundSound";
 import digestPW from '../../../utils/digestPw';
 
 const LoginUI = () => {
@@ -13,6 +14,7 @@ const LoginUI = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isMember, setIsMember] = useState(false);
   const [code, setCode] = useState('');
+    const pauseBackgroundSound = useBGMStore(state => state.pause)
   const [name, setName] = useState('');
   const navigate = useNavigate();
 
@@ -29,7 +31,8 @@ const LoginUI = () => {
       });
       if (res.data.message === 'success') {
         alert('로그인 성공');
-        navigate('/main');
+        pauseBackgroundSound(); 
+        navigate('/main?play=true');
       } else {
         alert('로그인 실패');
       }
