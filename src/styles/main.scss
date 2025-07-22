@@ -166,7 +166,7 @@
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%) scale(1) rotate(0deg);
-	transition: transform 1s ease-in-out;
+	transition: transform 0.5s ease-in-out;
 	display: flex;
 	flex-direction: column;
 	padding: 65px; /* 높이는 두 행 동일 */
@@ -200,152 +200,266 @@
 	font-weight: bold;
 	border-radius: 10px;
 }
-  //만화 4컷 화면 왼쪽으로 살짝 기울임
+
+
+//만화 4컷 화면 왼쪽으로 살짝 기울임
   .zoom-1 {
-    transform: translate(-42%, -30%) scale(1.25);
-    rotate: -8deg;
+    transform: translate(-42%, -30%) scale(1.25) rotate(-8deg);
+    
 }
 
 //기본 화면 (확대돼서 2컷만 보임)
 .zoom-2{
-	transform: translate(-49%, -15%) scale(1.6);
-    rotate: 0deg;
+	transform: translate(-49%, -15%) scale(1.6) rotate(0deg);
 }
 
+
 //화면 축소 4컷 보임
-.zoom-3{
-	transform: translate(-50%, -30%) scale(1);
-    rotate: 0deg;
+.zoom-3 {
+  transform: translate(-50%, -30%) scale(1) rotate(0deg);
 }
 
 //왼쪽만 확대
-.zoom-left1{
-	transform: translate(-20%, -15%) scale(1.9);
-    rotate: 0deg;
+.zoom-left1 {
+  transform: translate(-20%, -15%) scale(1.9) rotate(0deg);
 }
 
 //오른쪽만 확대
-.zoom-right1{
-	transform: translate(-70%, -15%) scale(1.9);
-    rotate: 0deg;
+.zoom-right1 {
+  transform: translate(-70%, -15%) scale(1.9) rotate(0deg);
 }
 
 //화면 축소:기본 한다음에
 
 //화면 축소0
-.zoom-min0{
-	transform: translate(-50%, -15%) scale(1.5);
-    rotate: 0;
+.zoom-min0 {
+  transform: translate(-50%, -15%) scale(1.5) rotate(0);
 }
 
 //화면 축소1
-.zoom-min1{
-	transform: translate(-50%, -17%) scale(1.4);
-    rotate: 0deg;
+.zoom-min1 {
+  transform: translate(-50%, -17%) scale(1.3) rotate(0deg);
 }
+
 //화면 축소2
-.zoom-min2{
-	transform: translate(-50%, -20%) scale(1.3);
-    rotate: 0;
+.zoom-min2 {
+  transform: translate(-50%, -20%) scale(1.1) rotate(0);
 }
 
 //화면 축소3
-.zoom-min3{
-	transform: translate(-50%, -23%) scale(1.1);
-    rotate: 0;
+.zoom-min3 {
+  transform: translate(-50%, -23%) scale(0.9) rotate(0);
 }
 
 //화면 축소4
-.zoom-min4{
-	transform: translate(-50%, -25%) scale(1);
-    rotate: 0;
+.zoom-min4 {
+  transform: translate(-50%, -25%) scale(0.7) rotate(0);
 }
 
 //화면 축소5
-.zoom-min5{
-	transform: translate(-50%, -30%) scale(0.8);
-    rotate: 0;
+.zoom-min5 {
+  transform: translate(-50%, -30%) scale(0.5) rotate(0);
 }
 
 //왼쪽 확대 회전
-.zoom-left2{
-	transform: translate(-40%, -32%) scale(1.3);
-    rotate: -10deg;
+.zoom-left2 {
+  transform: translate(-40%, -32%) scale(1.3) rotate(-10deg);
 }
 
 //오른쪽 확대 회전
-.zoom-right2{
-	transform: translate(-50%, -14%) scale(1.6);
-    rotate: 4deg;
+.zoom-right2 {
+  transform: translate(-50%, -14%) scale(1.6) rotate(4deg);
 }
 
 //오른쪽 축소 회전
-.zoom-right3{
-	transform: translate(-60%, -13%) scale(1.1);
-    rotate: 15deg;
+.zoom-right3 {
+  transform: translate(-60%, -13%) scale(1.1) rotate(15deg);
 }
 
 //상하반전
-.zoom-flip{
-	transform: translate(40%, 80%) scale(1);
-    rotate: 170deg;
+.zoom-flip {
+  transform: translate(40%, 80%) scale(1) rotate(170deg);
 }
 
 //왼쪽 확대, 오른쪽 확대 (이미 있음)
 
 //왼쪽 확대 회전2
-.zoom-left3{
-	transform: translate(-15%, -20%) scale(1.9);
-    rotate: -10deg;
-
+.zoom-left3 {
+  transform: translate(-15%, -20%) scale(1.9) rotate(-10deg);
 }
 
 //오른쪽 축소 회전
-.zoom-right4{
-	transform: translate(-60%, -20%) scale(1.4);
-    rotate: 10deg;
-
+.zoom-right4 {
+  transform: translate(-60%, -20%) scale(1.4) rotate(10deg);
 }
 
 //왼쪽 확대, 오른쪽 확대 후
 
 // 왼쪽 축소 회전
-.zoom-left4{
-	transform: translate(-20%, -35%) scale(1);
-    rotate: -10deg;
+.zoom-left4 {
+  transform: translate(-20%, -35%) scale(1) rotate(-10deg);
 }
 
 // 왼쪽 확대 회전3
-.zoom-left5{
-	transform: translate(-15%, -25%) scale(1.3);
-    rotate: -10deg;
+.zoom-left5 {
+  transform: translate(-15%, -25%) scale(1.3) rotate(-10deg);
 }
 
 // 왼쪽 확대 회전4
-.zoom-left5{
-	    transform: translate(-20%, -20%) scale(1.7);
-    rotate: -10deg;
+.zoom-left6 {
+  transform: translate(-20%, -20%) scale(1.7) rotate(-10deg);
 }
 
 //오른쪽
-.zoom-right5{
-	transform: translate(-75%, -10%) scale(1.3);
-    rotate: 10deg;
+.zoom-right5 {
+  transform: translate(-75%, -10%) scale(1.3) rotate(10deg);
 }
 
 //오른쪽 더 확대
-.zoom-right6{
-	transform: translate(-90%, -5%) scale(2.5);
-    rotate: 10deg;
+.zoom-right6 {
+  transform: translate(-90%, -5%) scale(2.5) rotate(10deg);
 }
 
 //오른쪽 더 확대
-.zoom-right7{
-	transform: translate(-100%, -5%) scale(3.5);
-    rotate: 10deg;
+.zoom-right7 {
+  transform: translate(-100%, -5%) scale(3.5) rotate(10deg);
 }
-
 //기본(시간지연) & 4컷 보여주고 끝
+
+// //화면 축소 4컷 보임
+// .zoom-3{
+// 	transform: translate(-50%, -30%) scale(1);
+//     rotate: 0deg;
+// }
+
+// //왼쪽만 확대
+// .zoom-left1{
+// 	transform: translate(-20%, -15%) scale(1.9);
+//     rotate: 0deg;
+// }
+
+// //오른쪽만 확대
+// .zoom-right1{
+// 	transform: translate(-70%, -15%) scale(1.9);
+//     rotate: 0deg;
+// }
+
+// //화면 축소:기본 한다음에
+
+// //화면 축소0
+// .zoom-min0{
+// 	transform: translate(-50%, -15%) scale(1.5);
+//     rotate: 0;
+// }
+
+// //화면 축소1
+// .zoom-min1{
+// 	transform: translate(-50%, -17%) scale(1.4);
+//     rotate: 0deg;
+// }
+// //화면 축소2
+// .zoom-min2{
+// 	transform: translate(-50%, -20%) scale(1.3);
+//     rotate: 0;
+// }
+
+// //화면 축소3
+// .zoom-min3{
+// 	transform: translate(-50%, -23%) scale(1.1);
+//     rotate: 0;
+// }
+
+// //화면 축소4
+// .zoom-min4{
+// 	transform: translate(-50%, -25%) scale(1);
+//     rotate: 0;
+// }
+
+// //화면 축소5
+// .zoom-min5{
+// 	transform: translate(-50%, -30%) scale(0.8);
+//     rotate: 0;
+// }
+
+// //왼쪽 확대 회전
+// .zoom-left2{
+// 	transform: translate(-40%, -32%) scale(1.3);
+//     rotate: -10deg;
+// }
+
+// //오른쪽 확대 회전
+// .zoom-right2{
+// 	transform: translate(-50%, -14%) scale(1.6);
+//     rotate: 4deg;
+// }
+
+// //오른쪽 축소 회전
+// .zoom-right3{
+// 	transform: translate(-60%, -13%) scale(1.1);
+//     rotate: 15deg;
+// }
+
+// //상하반전
+// .zoom-flip{
+// 	transform: translate(40%, 80%) scale(1);
+//     rotate: 170deg;
+// }
+
+// //왼쪽 확대, 오른쪽 확대 (이미 있음)
+
+// //왼쪽 확대 회전2
+// .zoom-left3{
+// 	transform: translate(-15%, -20%) scale(1.9);
+//     rotate: -10deg;
+
+// }
+
+// //오른쪽 축소 회전
+// .zoom-right4{
+// 	transform: translate(-60%, -20%) scale(1.4);
+//     rotate: 10deg;
+
+// }
+
+// //왼쪽 확대, 오른쪽 확대 후
+
+// // 왼쪽 축소 회전
+// .zoom-left4{
+// 	transform: translate(-20%, -35%) scale(1);
+//     rotate: -10deg;
+// }
+
+// // 왼쪽 확대 회전3
+// .zoom-left5{
+// 	transform: translate(-15%, -25%) scale(1.3);
+//     rotate: -10deg;
+// }
+
+// // 왼쪽 확대 회전4
+// .zoom-left5{
+// 	    transform: translate(-20%, -20%) scale(1.7);
+//     rotate: -10deg;
+// }
+
+// //오른쪽
+// .zoom-right5{
+// 	transform: translate(-75%, -10%) scale(1.3);
+//     rotate: 10deg;
+// }
+
+// //오른쪽 더 확대
+// .zoom-right6{
+// 	transform: translate(-90%, -5%) scale(2.5);
+//     rotate: 10deg;
+// }
+
+// //오른쪽 더 확대
+// .zoom-right7{
+// 	transform: translate(-100%, -5%) scale(3.5);
+//     rotate: 10deg;
+// }
+
+
 
 
   .zoom-all, .zoom-null {

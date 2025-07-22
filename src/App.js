@@ -8,6 +8,8 @@ const Test = lazy(() => import("./pages/test/Test"))
 const Theme = lazy(() => import("./pages/theme/Theme"))
 const Playground = lazy(() => import("./pages/playground/Playground"))
 const Login = lazy(() => import("./pages/login/Login"))
+
+const Main2 = lazy(() => import("./pages/main/Main2"))
 function App() {
 	return (
 		<BrowserRouter>
@@ -20,6 +22,7 @@ function App() {
 					<Route path='/login' element={<Login/>}/>
 					<Route path='/theme' element={<Theme/>}/>
 					<Route path='/main' element={<Main/>}/>
+					<Route path='/main2' element={<Main2/>}/>
 				</Routes>
 			</Suspense>
 		</BrowserRouter>
