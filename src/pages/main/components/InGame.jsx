@@ -17,6 +17,8 @@ import { Howl } from 'howler';
 import sneezeSound from '../../../assets/audio/sneeze.mp3'; // 경로 주의
 import failSound from '../../../assets/audio/fail_effect.mp3'; // 경로 주의
 import successSound from '../../../assets/audio/success_effect.mp3'; // 경로 주의
+import { useNavigate } from 'react-router-dom';
+
 const emojiTimings = [
 	7.5, 7.84, 8.18, 
 	11.26, 11.6, 11.94, 
@@ -46,6 +48,8 @@ const emojiTimings = [
  ];
 const MAX_COUGH = 6;
 const InGame = ({zoomState, setZoomState, isStart}) => {
+	const navigate = useNavigate();
+	const [currentIndex, setCurrentIndex] = useState(0)
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
@@ -174,7 +178,12 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	
 	const scheduleNextFailure = () => { //timings 배열 마다 있는 시간 + 1.8초 후에 안눌리면 fail로직 발동시키고 index하나증가시켜서 다음 차례 시간 + 1.8초 검사할 수 있게 ㅅ케쥴링
 		const index = currentIndexRef.current;
-		if (index >= emojiTimings.length) return;
+		if (index >= emojiTimings.length) {
+		setTimeout(() => {
+			navigate('/ending');
+		}, 1000); // 1초 후 ending으로 이동
+		return;
+		}
 	  
 		const now = performance.now();
 		const delay = (emojiTimings[index] + betweenTimeRef.current) * 1000 - (now - startTimeRef.current);

@@ -2,8 +2,8 @@ import '../../styles/login.scss';
 import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
-import url from '../../utils/backend';
-import digestPW from '../../utils/digestPw';
+import url from '../../../utils/backend';
+import digestPW from '../../../utils/digestPw';
 const Main = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

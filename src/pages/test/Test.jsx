@@ -7,6 +7,7 @@ import '../../styles/cloud.scss'; // SCSS import
 import kimfart from '../../assets/images/kimfart.png'
 import clickSound from '../../assets/audio/proud-fart-288263.mp3'; // 경로 주의
 import backgroundSound from '../../assets/audio/main_background.mp3'
+import LoginUI from './components/LoginUI';
 const Test = () => {
 	const setAudio = useBGMStore(state => state.setAudio)
 	const playBackgroundSound = useBGMStore(state => state.play)
@@ -27,6 +28,7 @@ const Test = () => {
 	const [displayedText2, setDisplayedText2] = useState('')
 	const [isTyping, setIsTyping] = useState('')
 	const [isButton, setIsButton] = useState(false)
+	const [showLogin, setShowLogin] = useState(false);
  	const handleText = async() => {
 		const text = '방구를뿌우우웅~'
 		fullTextRef.current = text;
@@ -65,30 +67,30 @@ const Test = () => {
 	}, [isAnimation]);
   return (
 	<div className="test-background">
-		<div className="menu-container" onClick={() => {if(!isAnimation) handleClick()}}>
-			{/* <div className={"start-item-conatiner " + (isAnimation ? 'start-item-conatiner-animation' : '')}> */}
-			<div className={"start-item-conatiner "}>
-				<img src={kimfart} className={'character ' + (isAnimation ? "start-item-conatiner-animation" : '')} alt="방구 캐릭터" />
-				{!isAnimation && <div className="twiggle-text">씰룩</div>}
-				{!isAnimation && <div className="twiggle-text2">씰룩</div>}
-				{isAnimation && 
-				<div className="cloud" data-type="white_5" style={{top: 250}}>
-					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:40, height:'45.5px', zIndex:100}}>
-						{displayedText}
-					</div>
-					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
-						{displayedText2}
-					</div>
-					{isButton && <button className="game-start-button" onClick={() => {pauseBackgroundSound(); navigate('/main?play=true')}}>Start</button>}
-				</div>}
-			</div>
-			{/* <h1 className="game-title2">💨 방구를 뿌우웅</h1> */}
-			{/* <div className="menu-button">시작하기</div>
-			<div className="menu-button">설정</div>
-			<div className="menu-button">제작진</div>
-			<div className="menu-button">종료</div> */}
-		</div>
-	</div>
+		{showLogin ? (
+        <LoginUI />
+      ) :(
+        <div className="menu-container" onClick={() => { if (!isAnimation) handleClick(); }}>
+          <div className={"start-item-conatiner "}>
+            <img src={kimfart} className={'character ' + (isAnimation ? "start-item-conatiner-animation" : '')} alt="방구 캐릭터" />
+            {!isAnimation && <div className="twiggle-text">씰룩</div>}
+            {!isAnimation && <div className="twiggle-text2">씰룩</div>}
+            {isAnimation &&
+              <div className="cloud" data-type="white_5" style={{ top: 250 }}>
+                <div className="cloud-text" style={{ display: 'flex', margin: 0, fontSize: 40, height: '45.5px', zIndex: 100 }}>
+                  {displayedText}
+                </div>
+                <div className="cloud-text" style={{ display: 'flex', margin: 0, fontSize: 50, zIndex: 100, height: 57 }}>
+                  {displayedText2}
+                </div>
+                {isButton && <button className="game-start-button" onClick={() => setShowLogin(true)}>Start</button>}
+                {/* {isButton && <button className="game-start-button" onClick={() =>{pauseBackgroundSound(); navigate('/main?play=true')}}>Start</button>} */}
+              </div>
+            }
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

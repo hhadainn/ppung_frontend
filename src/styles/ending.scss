@@ -1,0 +1,129 @@
+@import url(./font.css);
+.ending-container {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to top, #000000, #1a1a1a 60%, #2c2c2c 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px;
+  animation: fadeIn 1s ease-in forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sideShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+}
+
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-15px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  70% {
+    transform: translateY(-8px);
+  }
+}
+
+.ending-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bounce {
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+.side-shake {
+  animation: sideShake 1.2s ease-in-out infinite;
+}
+
+
+
+// .ending-frame {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   width: 400px;
+//   height: 200px;
+//   border: 20px solid #e4dcc9; /* 베이지톤 액자 테두리 */
+//   padding: 10px;
+//   background-color: #f7f3eb;
+
+//   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* 흰색 glow */
+// }
+
+.ending-image1 {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 20px auto 0 auto; /* 위에만 20px margin 줌 */
+}
+
+.ending-image2 {
+  width: 250px;
+  height: auto;
+  display: block;
+  margin: 50px auto 0 auto; 
+}
+
+.ending-image3{
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 10px auto 0 auto; 
+}
+
+
+.ending-text {
+  color: #e4dcc9;
+  font-size: 2.5rem;
+  margin-top: 30px;
+   margin-bottom: 0px;  
+  font-family:'BMkkubulimTTF-Regular';
+}
+
+.retry-btn {
+  width: 180px;
+  margin-top: 50px;
+  cursor: pointer;
+  background-color: #e4dcc9;
+  color: #000;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'BMkkubulimTTF-Regular';
+  transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+  transform: scale(1.05);
+  background-color: #f0e7d5;
+}

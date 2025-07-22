@@ -2,13 +2,15 @@
   width: 300px;
   margin: 100px auto;
   padding: 30px;
-  background-color: #fff;
+  background-color: #f9f3dc;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px #897d5f;
    display: flex;
   flex-direction: column;   // 세로 정렬
   align-items: center;      // 가운데 정렬
   gap: 10px;    // 요소 간 간격
+  font-family:'BMkkubulimTTF-Regular';
+  color:#897d5f;
 }
 
 .input-box {
@@ -16,25 +18,33 @@
   padding: 10px;
   margin: 10px 0;
   font-size: 16px;
+  font-family:'BMkkubulimTTF-Regular';
+  outline: none;
+  border: none
+}
+.input-box:focus {
+  border: 1px solid #897d5f; // 클릭 시 바뀔 색상
 }
 
 .signup-link {
   margin: 10px 0;
-  color: blue;
+  color: #897d5f;
   text-decoration: underline;
   cursor: pointer;
   font-size: 14px;
+  font-family:'BMkkubulimTTF-Regular';
 }
 
 .login-button {
   width: 95%;
   padding: 10px;
   font-size: 16px;
-  background-color: #4caf50;
-  color: white;
+  background-color: #897d5f;
+  color: #f0e7d5;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-family:'BMkkubulimTTF-Regular';
 }
 
 .error-message {
@@ -42,9 +52,37 @@
   font-size: 14px;
   margin-top: -5px;
   margin-bottom: 10px;
+  font-family:'BMkkubulimTTF-Regular';
 }
 
 .login-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.input-with-button {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.input-with-button .input-box {
+  flex: 1;
+  padding-right: 100px; // 버튼 자리 확보
+  box-sizing: border-box;
+}
+
+.verify-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 50%;
+  padding: 0 10px;
+  background-color: white;
+  border: 0px solid #ccc;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: 'BMkkubulimTTF-Regular';
+  color:#897d5f;
 }
