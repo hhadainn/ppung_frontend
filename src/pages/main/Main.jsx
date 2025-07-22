@@ -1,53 +1,48 @@
 import React, { useState, useRef } from 'react';
 import '../../styles/main.scss';
-
 import StartScreen from './components/StartScreen';
 import { useEffect } from 'react';
 import { useBGMStore } from "../../store/backgroundSound";
 import BlackScreen from './components/BlackScreen';
-import generateId from '../../utils/generateId';
-import bitSound from '../../assets/audio/background_bits.mp3'
 import introSound from '../../assets/audio/intro_background.mp3';
 import { useSearchParams } from 'react-router-dom';
-import { Howl } from 'howler';
-import sneezeSound from '../../assets/audio/sneeze.mp3'; // 경로 주의
-import failSound from '../../assets/audio/fail_effect.mp3'; // 경로 주의
-import successSound from '../../assets/audio/success_effect.mp3'; // 경로 주의
 import InGame from './components/InGame';
-const emojiTimings = [
-	7.5, 7.84, 8.18, 
-	11.26, 11.6, 11.94, 
-	14.9, 15.24, 15.58, 15.78,  
-	18.6, 18.767, 18.934, 19.101, 19.268, 19.468, 
-	22.2,22.54,22.88,23.08,
-	26.587,26.787, 27.127, 27.467,
-	29.716,30.217,30.417,
-	33.156,33.356,33.556,33.756,
-	36.849,37.049,37.249,37.449,37.669,
-	40.624,41.859,42.256,
-	44.336,44.676,45.016,45.216,
-	47.994,48.161, 48.328, 48.888, 49.055, 49.222,
-	51.656, 52.118, 52.712, 53.174,
-	55.317,55.484, 55.651, 55.818, 55.985, 56.185,
-	59.047, 59.247, 59.447,
-	62.7,63.04,63.38,63.58,
-	66.399,67.595,67.795, 67.995,
-	69.9,70.067,70.234,70.401,71.101,71.801
-
-];
+import Tutorial from './components/Tutorial';
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
-	const [tutorial, setTutorial] = useState(false)
+	const [tutorial, setTutorial] = useState(true)
 	const [searchParams, setSearchParams] = useSearchParams()
-	const play = searchParams.get('play')
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
+	const play = searchParams.get('play')
 	const setAudio = useBGMStore(state => state.setAudio)
+	const [isClicked, setIsClicked] = useState(false)
 	const [isBackground, setIsBackground] = useState(true)
 	const [isBlackScreen, setIsBlackScreen] = useState(true)
 	const [isStart, setIsStart] = useState(false)
+	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
+		if(tutorial){
+			const handleKeyDown = (e) => {
+				if(e.key === 'Escape'){
+					pauseBackgroundSound();
+					setIsBackground(false)
+					setIsBlackScreen(true)
+					setTutorial(false)
+					setTimeout(() => {
+						setIsBlackScreen(false)
+						setIsStart(true)
+					},1000)
+				}
+			}
+			window.addEventListener('keydown', handleKeyDown);
+			return () => window.removeEventListener('keydown', handleKeyDown);
+		}
+	},[tutorial])
 	useEffect(() => {
 		if(play === 'true'){
-			pauseBackgroundSound();
+			setIsClicked(true);
+			searchParams.set('play', 'false')
+			setSearchParams(searchParams)
+			// pauseBackgroundSound();
 			const audio = new Audio(introSound);
 			audio.play();
 			setAudio(audio);
@@ -55,9 +50,6 @@ const Main = () => {
 				setIsBackground(false)
 				setTimeout(() => {
 					setIsBlackScreen(false)
-					setIsStart(true)
-					searchParams.set('play', 'false')
-					setSearchParams(searchParams)
 				},1000)
 			}, 5000)
 		}
@@ -67,7 +59,7 @@ const Main = () => {
 			<StartScreen 
 				isBackground={isBackground}
 				onClick={() =>{
-					if(play !== 'true' && isBackground){
+					if(play !== 'true' && isBackground && !isClicked){
 						searchParams.set('play', 'true')
 						setSearchParams(searchParams)
 					}
@@ -76,8 +68,8 @@ const Main = () => {
 			<BlackScreen isBlackScreen={isBlackScreen}/> 
 			{/* 검은 화면 */}
 			{tutorial
-			?	<></>
-			:	<InGame isStart={isStart} setIsStart={setIsStart} zoomState={zoomState} setZoomState={setZoomState}/>
+			?	<Tutorial setStartGame={setIsStart} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
+			:	<InGame isStart={isStart} zoomState={zoomState} setZoomState={setZoomState}/>
 			}
 		</>
 	);

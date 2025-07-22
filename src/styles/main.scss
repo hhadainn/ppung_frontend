@@ -119,6 +119,9 @@
 .fly-left2right{
 	animation: flyRight 1.95s linear forwards;
 }
+.fly-left2right2{
+	animation: flyRight2 3.683s linear forwards;
+}
 @keyframes flyRight{
 	0%{
 		transform:translateX(100px) scale(1);
@@ -130,6 +133,32 @@
 	100%{
 		transform:translateX(700px) scale(1);
 		opacity:0;
+	}
+}
+@keyframes flyRight2{
+	0% {
+	  transform: translateX(100px)  scale(1);
+	  opacity: 1;
+	}
+	25% {
+	  transform: translateX(445px);
+	  opacity: 1;
+	}
+	26% {
+	  opacity: 0;
+	  transform: translateX(445px); /* 그대로 유지 */
+	}
+	75% {
+	  opacity: 0;
+	  transform: translateX(475px);
+	}
+	76% {
+	  opacity: 1;
+	  transform: translateX(475px); /* 다시 나타남 */
+	}
+	100% {
+	  transform: translateX(700px)  scale(1);
+	  opacity: 1;
 	}
 }
 .poop-style{
@@ -201,6 +230,9 @@
 }
 
 
+.zoom-0 {
+	transform: translate(-25%, -25%) scale(2);
+  }
 //만화 4컷 화면 왼쪽으로 살짝 기울임
   .zoom-1 {
     transform: translate(-42%, -30%) scale(1.25) rotate(-8deg);
@@ -336,6 +368,10 @@
 	transform: translate(-50.5%, -20%) scale(1.4);
 	rotate:0deg;
   }
+  .zoom-tutorial{
+	transform: translate(-50.5%, -14%) scale(1.6);
+	rotate:0deg;
+  }
 .main-black-screen{
 	width: 100vw;
 	height: 100vh;
@@ -399,7 +435,22 @@
 	left:250px;
 	align-items: center;
 }
+  .text-next-button{
+	position:absolute;
+	right:10px;
+	bottom:10px;
+	animation-name: moveDownUp;
+	animation-delay: 0.3s;
   
+	/* ❗필수: 반복 여부와 시간 추가 */
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+  }
+  @keyframes moveDownUp {
+	0% { transform: translateY(0); }
+	50% { transform: translateY(8px); }
+	100% { transform: translateY(0); }
+  }
   .character {
 	animation: fullWiggle 0.6s infinite ease-in-out;
 	margin-left: 250px;

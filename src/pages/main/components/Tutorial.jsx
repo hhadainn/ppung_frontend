@@ -12,64 +12,62 @@ import {ReactComponent as FartWind} from '../../../assets/images/fart_wind2.svg'
 import {ReactComponent as CaughSound} from '../../../assets/images/caugh_sound.svg'
 import { useEffect } from 'react';
 import { useBGMStore } from "../../../store/backgroundSound";
-import bitSound from '../../../assets/audio/background_bits.mp3'
+import tutorialBitSound from '../../../assets/audio/tutorial_background.mp3'
 import { Howl } from 'howler';
 import sneezeSound from '../../../assets/audio/sneeze.mp3'; // 경로 주의
 import failSound from '../../../assets/audio/fail_effect.mp3'; // 경로 주의
+import { AiFillCaretDown } from "react-icons/ai";
+
 import successSound from '../../../assets/audio/success_effect.mp3'; // 경로 주의
 const emojiTimings = [
-	7.5, 7.84, 8.18, 
-	11.26, 11.6, 11.94, 
-	14.9, 15.24, 15.58, 15.78,  
-	18.6, 18.767, 18.934, 19.101, 19.268, 19.468, 
-	22.2,22.54,22.88,23.08,
-	26.587,26.787, 27.127, 27.467,
-	29.716,30.217,30.417,
-	33.156,33.356,33.556,33.756,
-	36.849,37.049,37.249,37.449,37.669,
-	40.624,41.859,42.256,
-	44.336,44.676,45.016,45.216,
-	47.994,48.161, 48.328, 48.888, 49.055, 49.222,
-	51.656, 52.118, 52.712, 53.174,
-	55.317,55.484, 55.651, 55.818, 55.985, 56.185,
-	59.047, 59.247, 59.447,
-	62.7,63.04,63.38,63.58,
-	66.399,67.595,67.795, 67.995,
-	69.9,70.067,70.234,70.401,71.101,71.801,
-	73.7, 73.867, 74.267, 74.667, 75.067,
-	77.634, 78.276, 78.996,
-	81.297, 81.897, 82.497, 83.097,
-	85, 85.5, 86,
-	88.578, 89.078,89.578, //93
-	92.221, 93.084, 93.424, 93.99, 94.556,  //처음 치는 순간: 95.754
-	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
+	0, 0.5, 1.0, 3.7, 4.2, 4.7, 7.4, 7.9, 8.4
  ];
 const MAX_COUGH = 6;
-const InGame = ({zoomState, setZoomState, isStart}) => {
+const tutorialList = [
+	'교실에서 방귀가 마려우면 어떻게 할까요?',
+	'마침 옆에 친구가 기침을 하려 하네요. 이를 이용하면 묻어갈 수 있겠어요.',
+	'친구의 기침에 맞춰서 스페이스바를 눌러 방귀를 껴봅시다.',
+]
+const reTutorialList = [
+	'흠...',
+	'다시 해봅시다!',
+]
+const finishTutorialList = [
+	'상당한 실력자시네요!',
+	'아직 방귀는 많이 남았으니, 본격적으로 껴봅시다!',
+]
+const Tutorial = ({isBlackScreen,setIsBlackScreen, setStartGame, setTutorial}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
+	const [type, setType] = useState('default')
+	const [currentIndex, setCurrentIndex] = useState(0)
+	const [successTime, setSuccessTime] = useState(0)
 	const [coughSlots, setCoughSlots] = useState(Array(MAX_COUGH).fill({ active: false, key: 0 }))
 	const coughSlotIndexRef = useRef(0);
+	const [isStart, setIsStart] = useState(false)
 	let uniqueKeyCounter = useRef(0);
 	const [whenSuccess, setWhenSuccess] = useState(false)
 	const currentFailureTimer = useRef(null);
-	const betweenTimeRef = useRef(1.8); // 초기값
-
-	// 최신 값을 바꾸고 싶을 때:
+	const [isTyping, setIsTyping] = useState(false)
+	const [displayedText, setDisplayedText] = useState('')
+	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
+	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
+	const indexRef = useRef(0);
 	const queueRef = useRef([]);
 	const queueRef2 = useRef([]);
 	const queueRef3 = useRef([]);
 	const queueRef4 = useRef([]);
+	const [currentTextIndex, setCurrentTextIndex] = useState(0)
 	const startTimeRef = useRef(null);
 	const isProcessingRef = useRef(false);
 	const isProcessingRef2 = useRef(false);
 	const isProcessingRef3 = useRef(false);
 	const isProcessingRef4 = useRef(false);
 	const timerRefs = useRef([]);
-	const successEffect = new Howl({ src: [successSound] });
-	const effect = new Howl({ src: [sneezeSound], preload:true });
-	const failEffect = new Howl({ src: [failSound] });
+	const successEffect = new Howl({ src: [successSound], volume: 0.1 });
+	const effect = new Howl({ src: [sneezeSound], preload:true, volume: 0.1 });
+	const failEffect = new Howl({ src: [failSound], volume: 0.1 });
 	const [isCoughClicked, setIsCoughClicked] = useState(false);
 	const [isFartClicked, setIsFartClicked] = useState(false);
 	const setAudio = useBGMStore(state => state.setAudio)
@@ -136,7 +134,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 					const now = performance.now();
 					const elapsed = (now - startTimeRef.current) / 1000; 
 					const index = currentIndexRef.current;
-					const targetTime = emojiTimings[index] + betweenTimeRef.current;
+					const targetTime = emojiTimings[index] + 1.8;
 					const diff = Math.abs(elapsed - targetTime);
 					if (diff <= 0.15) {
 						successEffect.play();
@@ -145,9 +143,8 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 							setTimeout(() => setWhenSuccess(false), 150)
 						})
 						processQueue4();
-						if (index == 93) {
-						  betweenTimeRef.current = 3.53;
-						}
+						setCurrentIndex(prev => prev + 1)
+						setSuccessTime(prev => prev + 1)
 						if (currentFailureTimer.current) clearTimeout(currentFailureTimer.current); // ⛔ 중복 방지
 						currentIndexRef.current += 1;
 						scheduleNextFailure();
@@ -159,6 +156,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 							setTimeout(() => setWhenFail(false), 150)
 						})
 						processQueue3();
+
 					}
 					queueRef.current.push(() => {
 						setIsFartClicked(true);
@@ -171,13 +169,64 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 			return () => window.removeEventListener('keydown', handleKeyDown);
 		}
 	},[isStart])
-	
+	const handleText = async() => {
+		const list = [...(type == 'default' ? tutorialList : (type == 'finish' ? finishTutorialList : reTutorialList))]
+		const text = list[currentTextIndex]
+		fullTextRef.current = text;
+		indexRef.current = 0
+		setDisplayedText('')
+		setIsTyping(true)
+		if (intervalRef.current) clearInterval(intervalRef.current);
+		intervalRef.current = setInterval(() => {
+			if (indexRef.current < fullTextRef.current.length) {
+			const nextChar = fullTextRef.current.charAt(indexRef.current);
+			setDisplayedText((prev) => prev + nextChar);
+			indexRef.current += 1;
+			} else {
+			clearInterval(intervalRef.current);
+			setIsTyping(false);
+			}
+		}, 50);
+
+		return () => clearInterval(intervalRef.current);
+	}
+	const skipTyping = () => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			setDisplayedText(fullTextRef.current);
+			setIsTyping(false);
+		}
+	};
+	const handleNext = () => {
+
+		if(isTyping){
+			skipTyping()
+			return;
+		}
+		const list = [...(type == 'default' ? tutorialList : (type == 'finish' ? finishTutorialList : reTutorialList))]
+		if(currentTextIndex == (list.length - 1)){
+			if(type == 'finish'){
+				setIsBlackScreen(true)
+				setTutorial(false)
+				setTimeout(() => {
+					setIsBlackScreen(false)
+					setStartGame(true)
+				},1000)
+			}
+			else setIsStart(true);
+			return;
+		}
+		setCurrentTextIndex(currentTextIndex + 1)
+	}
+	useEffect(() => {
+		if(!isBlackScreen) handleText()
+	},[currentTextIndex, isBlackScreen])
 	const scheduleNextFailure = () => { //timings 배열 마다 있는 시간 + 1.8초 후에 안눌리면 fail로직 발동시키고 index하나증가시켜서 다음 차례 시간 + 1.8초 검사할 수 있게 ㅅ케쥴링
 		const index = currentIndexRef.current;
 		if (index >= emojiTimings.length) return;
 	  
 		const now = performance.now();
-		const delay = (emojiTimings[index] + betweenTimeRef.current) * 1000 - (now - startTimeRef.current);
+		const delay = (emojiTimings[index] + 1.8) * 1000 - (now - startTimeRef.current);
 	  
 		// ⛔ 기존 실패 예약 취소
 		if (currentFailureTimer.current) {
@@ -191,9 +240,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 				setTimeout(() => setWhenFail(false), 150)
 			})
 			processQueue3();
-			if (index == 93) {
-			  betweenTimeRef.current = 3.53;
-			}
+			setCurrentIndex(prev => prev + 1)
 			currentIndexRef.current += 1;
 			scheduleNextFailure(); // 다음 실패 예약
 		}, delay + 150);
@@ -216,15 +263,14 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 			newState[slot] = { active: false, key };
 			return newState;
 		  });
-		}, (betweenTimeRef.current + 0.15) * 1000);
+		}, 1950);
 	  
 		coughSlotIndexRef.current = (slot + 1) % MAX_COUGH;
 	  };
-	useEffect(() => {
-		if (!isStart) return;
-	  
-		const audio = new Audio(bitSound);
-	  
+	  useEffect(() => {
+		if(!isStart) return;
+		const audio = new Audio(tutorialBitSound);
+		audio.volume = 1.0;
 		audio.onplay = () => {
 		  // 기준 시간 기록
 		  startTimeRef.current = performance.now();
@@ -249,58 +295,6 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 			}, timeInSec * 1000);
 			timerRefs.current.push(timeout);
 		  }); //재채기 소리, 재채기 파형 나가게 하기, 재채기 모션 바뀌고 돌아오게 하기
-
-		  // ✅ 화면 전환 타이밍
-		  const zoomSequence = [
-			[0, '1'],
-			[3.4, '2'],
-			[29.3, '3'],
-			[37.1, 'left1'],
-			[38.8, 'right1'],
-			[40.7, 'left1'],
-			[42.5, 'right1'],
-			[44.3, 'left1'],
-			[46.1, 'right1'],
-			[48.0, 'left1'],
-			[49.9, 'right1'],
-			[51.8, 'left1'],
-			[53.7, 'right1'],
-			[55.5, 'left1'],
-			[57.2, 'right1'],
-			[59.2, '2'],
-			[59.5, 'min0'],
-			[59.7, 'min1'],
-			[59.9, 'min2'],
-			[60.9, 'min3'],
-			[61.3, 'min4'],
-			[61.6, 'min5'], 
-			[62.8, 'left2'],
-			[66.4, 'right2'],
-			[70.2, 'right3'],
-			[73.9, 'flip'],
-			[77.6, 'left1'],
-			[79.4, 'right1'],
-			[81.4, 'left3'],
-			[83.2,'right4'],
-			[85.1, 'left1'],
-			[86.9, 'right1'],
-			[88.6, 'left4'],
-			[89.1, 'left5'],
-			[89.6, 'left6'],
-			[90.5, 'right5'],
-			[91.0, 'right6'],
-			[91.5, 'right7'],
-			[92.4, '2'],
-			[106.8, '1']
-			
-
-		
-		  ];
-	  
-		  zoomSequence.forEach(([delaySec, state]) => {
-			const timeout = setTimeout(() => setZoomState(state), delaySec * 1000);
-			timerRefs.current.push(timeout);
-		  });
 		};
 	  
 		audio.play().catch((err) => console.warn('autoplay blocked', err));
@@ -310,23 +304,51 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 		  timerRefs.current.forEach(clearTimeout);
 		//   audio.pause();
 		};
-	  }, [isStart]);
+	  },[isStart])
+	  useEffect(() => {
+		if(currentIndex == 9){
+			setTimeout(() => {
+				if(successTime == 9){
+					setType('finish')
+				}
+				else setType('retry')
+				currentIndexRef.current = 0;
+				setIsStart(false)
+				setCurrentTextIndex(0)
+				setCurrentIndex(0)
+				setSuccessTime(0)
+			}, 1000)
+		}
+	  },[currentIndex])
 	return(
 		<div 
 			className="viewport" 
 		>
-			<div className={`comic-board zoom-${zoomState}`}>
+			<div className={`comic-board zoom-tutorial`}>
+				{!isStart && 
+				<div style={{position:'absolute',backgroundColor:'rgb(239, 245, 246)', border:'1px solid #000', fontFamily:'BMkkubulimTTF-Regular', fontSize:25, zIndex:100, left:160, boxShadow:'1px 1px #000', top:100, width:800, height:100}}>
+					<div onClick={() => handleNext()} style={{cursor:'pointer',position:'relative', color:'rgb(34, 41, 61)', width:'100%', height:'100%', border:'1px solid #fff'}}>
+						<div style={{marginTop: 25, marginLeft: 30}}>
+							{displayedText}
+						</div>
+						<AiFillCaretDown className='text-next-button'/>
+					</div>
+				</div>}
+				{isStart && 
+				<div style={{position:'absolute',color:'rgb(33, 40, 66)',fontWeight:'bold', left:150, top:100, fontSize:40, fontFamily:'BMkkubulimTTF-Regular', backgroundColor:'rgb(241, 243, 225)'}}>
+					{`앞으로 ${currentIndex < 3 ? 3 : (currentIndex < 6 ? 2 : (currentIndex == 9 ? 0 : 1))}번!`}
+				</div>
+				}
 				{/* 네 컷 위치 고정 */}
 				<div className="row top-row">
 					<div className='container'></div>
-					<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
 					{coughSlots.map(({active, key}, i) => {
 						if(!active) return null
 						return(
-							<CaughSound key={key} className={'caugh-sound ' + (betweenTimeRef.current == 1.8 ? 'fly-left2right' : 'fly-left2right2')}/>
+							<CaughSound key={key} className='caugh-sound fly-left2right'/>
 						)
 					})}
-					<div className="panel">
+					<div className="panel" style={{border:'0'}}>
 						<img
 							className="bottom-left-image"
 							src={isCoughClicked ? coughImg : cough_standing}
@@ -338,7 +360,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 							<p style={{margin:0}}>취</p>
 						</div>}
 					</div>
-					<div className="panel">
+					<div className="panel" style={{border:'0'}}>
 						<img
 							className="bottom-right-image"
 							src={whenFail ? fartFailImg : (whenSuccess ? fartImg : fart_standingImg)}
@@ -369,4 +391,4 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 		</div>
 	)
 }
-export default InGame
+export default Tutorial

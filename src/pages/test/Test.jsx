@@ -10,6 +10,7 @@ import backgroundSound from '../../assets/audio/main_background.mp3'
 const Test = () => {
 	const setAudio = useBGMStore(state => state.setAudio)
 	const playBackgroundSound = useBGMStore(state => state.play)
+	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
 	const fullTextRef = useRef('');           // 🔸 전체 텍스트 저장
 	const indexRef = useRef(0);
@@ -78,7 +79,7 @@ const Test = () => {
 					<div className="cloud-text" style={{display:'flex',margin:0, fontSize:50,zIndex:100, height:57}}>
 						{displayedText2}
 					</div>
-					{isButton && <button className="game-start-button" onClick={() => navigate('/main?play=true')}>Start</button>}
+					{isButton && <button className="game-start-button" onClick={() => {pauseBackgroundSound(); navigate('/main?play=true')}}>Start</button>}
 				</div>}
 			</div>
 			{/* <h1 className="game-title2">💨 방구를 뿌우웅</h1> */}
