@@ -22,19 +22,20 @@ const Main = () => {
 	const [score, setScore] = useState(0)
 	const [isBlackScreen, setIsBlackScreen] = useState(true)
 	const [isStart, setIsStart] = useState(false)
+	const handleEscape = () => {
+		pauseBackgroundSound();
+		setIsBackground(false)
+		setIsBlackScreen(true)
+		setTutorial(false)
+		setTimeout(() => {
+			setIsBlackScreen(false)
+			setIsStart(true)
+		},1000)
+	}
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(tutorial && isClicked){
 			const handleKeyDown = (e) => {
-				if(e.key === 'Escape'){
-					pauseBackgroundSound();
-					setIsBackground(false)
-					setIsBlackScreen(true)
-					setTutorial(false)
-					setTimeout(() => {
-						setIsBlackScreen(false)
-						setIsStart(true)
-					},1000)
-				}
+				if(e.key === 'Escape') handleEscape()
 			}
 			window.addEventListener('keydown', handleKeyDown);
 			return () => window.removeEventListener('keydown', handleKeyDown);
@@ -65,6 +66,8 @@ const Main = () => {
 			</div>}
 			<StartScreen 
 				isClicked={isClicked}
+				tutorial={tutorial}
+				handleEscape={handleEscape}
 				isBackground={isBackground}
 				onClick={() =>{
 					if(play !== 'true' && isBackground && !isClicked){
@@ -73,7 +76,12 @@ const Main = () => {
 					}
 				}} // fart time 화면
 			/> 
-			<BlackScreen isBlackScreen={isBlackScreen}/> 
+			<BlackScreen 
+				isBlackScreen={isBlackScreen}
+				isClicked={isClicked}
+				tutorial={tutorial}
+				handleEscape={handleEscape}
+			/> 
 			{/* 검은 화면 */}
 			<></>
 			<Tutorial setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>

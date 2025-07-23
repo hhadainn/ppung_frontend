@@ -283,7 +283,6 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	  useEffect(() => {
 		if(!isStart) return;
 		const audio = new Audio(tutorialBitSound);
-		audioRef.current = audio; 
 		audio.volume = 0.9;
 		audio.onplay = () => {
 		  // 기준 시간 기록
@@ -312,7 +311,7 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 		};
 	  
 		audio.play().catch((err) => console.warn('autoplay blocked', err));
-		//setAudio(audio);
+		setAudio(audio);
 	  
 		return () => {
 		  timerRefs.current.forEach(clearTimeout);
@@ -334,6 +333,18 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 			}, 1000)
 		}
 	  },[currentIndex])
+	// useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
+	// 	const handleKeyDown = (e) => {
+	// 		if(e.key === 'Escape'){
+	// 			console.log('escape', 'tutorial')
+	// 			clearTimeout(coughTimeoutRef.current);
+	// 			clearTimeout(currentFailureTimer.current)
+	// 			timerRefs.current.forEach(clearTimeout);
+	// 		}
+	// 	}
+	// 	window.addEventListener('keydown', handleKeyDown);
+	// 	return () => window.removeEventListener('keydown', handleKeyDown);
+	// },[])
 	return(
 		<div
 			style={{zIndex:5}} 
