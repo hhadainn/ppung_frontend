@@ -5,6 +5,7 @@ import axios from 'axios';
 import url from '../../../utils/backend';
 import { useBGMStore } from "../../../store/backgroundSound";
 import digestPW from '../../../utils/digestPw';
+import { useEffect } from 'react';
 
 const LoginUI = () => {
   const [username, setUsername] = useState('');
@@ -21,6 +22,7 @@ const LoginUI = () => {
   const isPasswordValid = joinpassword.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(joinpassword);
   const passwordsMatch = joinpassword === confirmPassword;
   const allFieldsFilled = joinusername && joinpassword && confirmPassword;
+
 
   const login = async () => {
     try {
@@ -53,7 +55,8 @@ const LoginUI = () => {
         alert('이미 존재합니다');
       } else {
         alert('계정 생성 성공');
-        navigate('/main');
+        pauseBackgroundSound(); 
+        navigate('/main?play=true');
       }
     } catch (e) {
       console.log(e);
@@ -88,6 +91,35 @@ const LoginUI = () => {
       console.log(e);
     }
   };
+
+    useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      if (!isMember) {
+        // 로그인 모드일 때
+        login();
+      } else {
+        // 회원가입 모드일 때: 입력 다 채웠는지 확인
+        if (joinusername && joinpassword && confirmPassword && passwordsMatch && isPasswordValid) {
+          createUser();
+        }
+      }
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, [
+  isMember,
+  username,
+  password,
+  joinusername,
+  joinpassword,
+  confirmPassword,
+  passwordsMatch,
+  isPasswordValid
+]);
+
 
   return (
     <div className='login-container'>
@@ -137,7 +169,7 @@ const LoginUI = () => {
           <input type="text" placeholder="아이디" value={username} onChange={(e) => setUsername(e.target.value)} className="input-box" />
           <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} className="input-box" />
           <div className="signup-link" onClick={() => setIsMember(true)}>회원가입하기</div>
-          <button className="login-button" onClick={login}>로그인</button>
+          <button className="login-button" onClick={login} onEnter={login}>로그인</button>
         </>
       )}
     </div>
