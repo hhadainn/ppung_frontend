@@ -155,26 +155,32 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 						if (index == 93) {
 						  betweenTimeRef.current = 3.53;
 						}
-						if(diff <= 0.05){
+						if(diff <= 0.01){
 							let score = 3
 							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
+							else if(currentClick == 'Great') score +=1
 							setScore(prev => prev + score)
 							setCurrentClick('Perfect')
 						}
-						else if(diff <= 0.1){
+						else if(diff <= 0.025){
 							let score = 2
-							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
+							if(currentClick == 'Perfect') score += 1
+							else if(currentClick == 'Great') score += 0.5
+							setScore(prev => prev + score)
+							setCurrentClick('Great')
+						}
+						else if(diff <= 0.05){
+							let score = 1
 							setScore(prev => prev + score)
 							setCurrentClick('Good')
 						}
-						else{
-							let score = 2
-							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
+						else if(diff <= 0.1){
+							let score = 0.5
+							setScore(prev => prev + score)
 							setCurrentClick('Bad')
-							setScore(prev => prev + 1)
+						}
+						else{
+							setCurrentClick('Poor')
 						}
 						if (index >= emojiTimings.length) {
 							setTimeout(() => {
@@ -399,7 +405,17 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 							<p style={{margin:0}}>뿌</p>
 							<p style={{margin:0}}>웅</p>
 						</div>}
-						{isFartClicked && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:300, bottom:130}}>
+						{(isFartClicked || whenFail) && 
+						<div 
+							className={classNames('click-type', 
+									{'perfect-color': currentClick == 'Perfect'},
+									{'great-color': currentClick == 'Great'},
+									{'good-color': currentClick == 'Good'},
+									{'bad-color': currentClick == 'Bad'},
+									{'poor-color': currentClick == 'Poor'},
+									{'miss-color': currentClick == 'Miss'},
+							)}
+						>
 							{currentClick}
 						</div>}
 						{(whenFail) && 
