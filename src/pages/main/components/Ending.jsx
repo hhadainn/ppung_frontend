@@ -36,22 +36,37 @@ const Ending = ({score, ending, reStartGame}) => {
     <div className={`ending-content ${animationClass}`}>
       <p className="ending-text">{message}</p>
       <img src={imageSrc} alt="ending character" className={imageClass} />
+    </div>
 
-      <p className="ending-text" onClick={() => setShowRanking(true)} style={{ cursor: 'pointer' }}>
+      <button className="retry-btn" onClick={reStartGame}>
+      다시 플레이하기
+    </button>
+     <p className="ranking-text" onClick={() => setShowRanking(true)} style={{ cursor: 'pointer' }}>
         랭킹보기
       </p>
 
+    
+
       
-    </div>
 
     {showRanking && (
   <div className="ranking-frame">
-    <h2>🎉 랭킹</h2>
+    {/* 닫기 아이콘 버튼 */}
+    <button className="close-btn" onClick={() => setShowRanking(false)}>✖</button>
+
+
+    <h2> 랭킹</h2>
     <div className="ranking-list">
       {[  // 예시 데이터
         { rank: 1, name: '정용수', score: 122292 },
         { rank: 2, name: '우산장수', score: 63572 },
         { rank: 3, name: '이원규', score: 20629 },
+        {rank: 4, name: '한다인', score: 12345 },
+         { rank: 1, name: '정용수', score: 122292 },
+        { rank: 2, name: '우산장수', score: 63572 },
+        { rank: 3, name: '이원규', score: 20629 },
+        {rank: 4, name: '한다인', score: 12345 },
+        
       ].map((item, index) => (
         <div className="rank-item" key={index}>
           <div className={`rank-badge rank-${index + 1}`}>

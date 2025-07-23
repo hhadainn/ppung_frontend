@@ -13,7 +13,7 @@ const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
 	const [tutorial, setTutorial] = useState(true)
 	const [searchParams, setSearchParams] = useSearchParams()
-	const [isEnding, setIsEnding] = useState(true)
+	const [isEnding, setIsEnding] = useState(false)
 	const coughTimeoutRef = useRef(null); 
 	const currentFailureTimer = useRef(null);
 	const timerRefs = useRef([]);
