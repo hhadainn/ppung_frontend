@@ -37,10 +37,9 @@ const finishTutorialList = [
 	'상당한 방구쟁이시네요!',
 	'아직 방귀는 많이 남았으니, 본격적으로 껴봅시다!',
 ]
-const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setTutorial}) => {
+const Tutorial = ({isBlackScreen,coughTimeoutRef, currentFailureTimer,timerRefs, setIsBlackScreen, tutorial,  setStartGame, setTutorial}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
-	const coughTimeoutRef = useRef(null); 
 	const [type, setType] = useState('default')
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [successTime, setSuccessTime] = useState(0)
@@ -49,7 +48,6 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	const [isStart, setIsStart] = useState(false)
 	let uniqueKeyCounter = useRef(0);
 	const [whenSuccess, setWhenSuccess] = useState(false)
-	const currentFailureTimer = useRef(null);
 	const [isTyping, setIsTyping] = useState(false)
 	const [displayedText, setDisplayedText] = useState('')
 	const intervalRef = useRef(null);         // 🔸 setInterval ID 저장
@@ -65,7 +63,6 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	const isProcessingRef2 = useRef(false);
 	const isProcessingRef3 = useRef(false);
 	const isProcessingRef4 = useRef(false);
-	const timerRefs = useRef([]);
 	const successEffect = new Howl({ src: [successSound] });
 	const effect = new Howl({ src: [sneezeSound], preload:true});
 	const failEffect = new Howl({ src: [failSound] });
@@ -130,15 +127,22 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	  };
 	
 	useEffect(() => {
-	const handleKeyDown = (e) => {
-		if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
-		e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
-		handleNext();
+		if(tutorial && !isBlackScreen){
+			const handleKeyDown = (e) => {
+				if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
+					e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
+					if(isTyping){
+						skipTyping();
+					}
+					else{
+						handleNext()
+					}
+				}
+			};
+			window.addEventListener('keydown', handleKeyDown);
+				return () => window.removeEventListener('keydown', handleKeyDown);
 		}
-	};
-	window.addEventListener('keydown', handleKeyDown);
-	return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [isTyping]);
+	}, [isTyping, tutorial, !isBlackScreen]);
 
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(isStart){
@@ -333,18 +337,6 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 			}, 1000)
 		}
 	  },[currentIndex])
-	// useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
-	// 	const handleKeyDown = (e) => {
-	// 		if(e.key === 'Escape'){
-	// 			console.log('escape', 'tutorial')
-	// 			clearTimeout(coughTimeoutRef.current);
-	// 			clearTimeout(currentFailureTimer.current)
-	// 			timerRefs.current.forEach(clearTimeout);
-	// 		}
-	// 	}
-	// 	window.addEventListener('keydown', handleKeyDown);
-	// 	return () => window.removeEventListener('keydown', handleKeyDown);
-	// },[])
 	return(
 		<div
 			style={{zIndex:5}} 

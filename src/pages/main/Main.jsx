@@ -14,6 +14,9 @@ const Main = () => {
 	const [tutorial, setTutorial] = useState(true)
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [isEnding, setIsEnding] = useState(false)
+	const coughTimeoutRef = useRef(null); 
+	const currentFailureTimer = useRef(null);
+	const timerRefs = useRef([]);
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const play = searchParams.get('play')
 	const setAudio = useBGMStore(state => state.setAudio)
@@ -23,6 +26,9 @@ const Main = () => {
 	const [isBlackScreen, setIsBlackScreen] = useState(true)
 	const [isStart, setIsStart] = useState(false)
 	const handleEscape = () => {
+		clearTimeout(coughTimeoutRef.current);
+		clearTimeout(currentFailureTimer.current)
+		timerRefs.current.forEach(clearTimeout);
 		pauseBackgroundSound();
 		setIsBackground(false)
 		setIsBlackScreen(true)
@@ -32,6 +38,14 @@ const Main = () => {
 			setIsStart(true)
 		},1000)
 	}
+	// const handleKeyDown = (e) => {
+	// 	if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
+	// 	e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
+	// 	handleNext();
+	// 	}
+	// };
+	// window.addEventListener('keydown', handleKeyDown);
+	// return () => window.removeEventListener('keydown', handleKeyDown);
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(tutorial && isClicked){
 			const handleKeyDown = (e) => {
@@ -84,7 +98,7 @@ const Main = () => {
 			/> 
 			{/* 검은 화면 */}
 			<></>
-			<Tutorial setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
+			<Tutorial coughTimeoutRef={coughTimeoutRef} timerRefs={timerRefs} currentFailureTimer={currentFailureTimer} setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
 			<InGame setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
 			<Ending ending={isEnding} score={score}/>
 		</>
