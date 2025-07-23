@@ -65,20 +65,6 @@
 
 
 
-// .ending-frame {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   width: 400px;
-//   height: 200px;
-//   border: 20px solid #e4dcc9; /* 베이지톤 액자 테두리 */
-//   padding: 10px;
-//   background-color: #f7f3eb;
-
-//   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* 흰색 glow */
-// }
-
 .ending-image1 {
   width: 200px;
   height: auto;
@@ -126,4 +112,85 @@
 .retry-btn:hover {
   transform: scale(1.05);
   background-color: #f0e7d5;
+}
+
+
+.ranking-frame {
+  display: flex;
+  flex-direction: column;
+  position: fixed;            /* 화면 기준 위치 고정 */
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;    
+  width: 70%;
+  height: 70%;
+  border: 10px solid #e4dcc9; /* 베이지톤 액자 테두리 */
+  padding: 10px;
+  background-color: #f7f3eb;
+
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* 흰색 glow */
+}
+
+.ranking-list {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  background-color: #897d5f;
+  border-radius: 12px;
+  padding: 10px 20px;
+  color: white;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.rank-badge {
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  margin-right: 15px;
+  color: white;
+}
+
+.rank-1 {
+  background-color: gold;
+  color: #333;
+}
+
+.rank-2 {
+  background-color: silver;
+  color: #333;
+}
+
+.rank-3 {
+  background-color: #cd7f32; // 동색 (브론즈)
+  color: #fff;
+}
+
+
+.rank-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; // 양쪽으로 퍼지게
+}
+
+.rank-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.rank-score {
+  font-size: 1rem;
 }
