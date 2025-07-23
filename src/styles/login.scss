@@ -25,6 +25,9 @@
 .input-box:focus {
   border: 1px solid #897d5f; // 클릭 시 바뀔 색상
 }
+.input-box:disabled {
+  border: 1px solid #ccc; // 클릭 시 바뀔 색상
+}
 
 .signup-link {
   margin: 10px 0;
@@ -36,7 +39,7 @@
 }
 
 .login-button {
-  width: 95%;
+  width: 100%;
   padding: 10px;
   font-size: 16px;
   background-color: #897d5f;
@@ -73,6 +76,8 @@
 }
 
 .verify-button {
+	display:flex;
+	align-items: center;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -86,3 +91,203 @@
   font-family: 'BMkkubulimTTF-Regular';
   color:#897d5f;
 }
+.disabled-button{
+	cursor:default;
+}
+
+.swal-confirm-title {
+	font-size: 16px !important;
+	color: #888888 !important;
+  }
+  .swal-confirm-btn {
+	background-color: #1976d2 !important;
+	font-size: 12px !important;
+	font-weight: 600;
+	padding: 4px 18px !important;
+  }
+  .swal-confirm-cancel {
+	background-color: #888 !important;
+	font-size: 12px !important;
+	font-weight: 600;
+	padding: 4px 18px !important;
+  }
+  .swal-confirm-container {
+	width: 350px !important;
+	display: flex;
+	padding: 10px 0 10px 0 !important;
+  }
+  .swal-confirm-icon {
+	font-size: 10px !important;
+  }
+  .swal-confirm-wrap {
+	z-index: 35000!important;
+	&.swal-text-color{
+	  .swal2-html-container{
+		  p{
+			  color: #ff0000;
+		  }
+	  }
+	}
+  }
+
+.swal-confirm-title {
+	color: #202020!important;
+	font-size: 20px!important;
+	font-weight: 700;
+	padding: 20px 20px 0
+  }
+  
+  .swal-confirm-container {
+	border-radius: 0!important;
+	display: flex!important;
+	flex-direction: column!important;
+	min-width: 30%!important;
+	padding: 0!important;
+	width: auto!important;
+	z-index: 30000!important
+  }
+  
+  .swal-confirm-container.single .swal-confirm-title {
+	color: #202020!important;
+	font-size: 20px!important;
+	font-weight: 700!important;
+  //   opacity: .9
+  }
+  
+  .swal-confirm-container.single .swal2-actions {
+	padding-bottom: 30px!important
+  }
+  
+  .swal-confirm-container.single .swal2-html-container {
+  //   font-weight: 400!important;
+	line-height: 25px
+  }
+  
+  .swal-confirm-container.single .swal-confirm-btn {
+	border-radius: 1px!important;
+	flex: none!important;
+	height: 38px!important;
+	width: 70%!important
+  }
+  
+  .swal2-html-container {
+	color: #202020!important;
+	padding: 20px 20px 25px!important;
+	margin:0 !important;
+	font-weight:500;
+	font-size:16px !important;
+	p{
+	  margin:0 !important;
+	}
+  }
+  
+  .swal2-actions {
+	margin: 0!important;
+	width: 100%!important
+  }
+  
+  .swal2-actions .swal2-cancel,.swal2-actions .swal2-confirm {
+	border-radius: 0!important;
+	cursor: pointer!important;
+	border:none !important;
+	flex: 1 1!important;
+	font-size: 14px!important;
+	height: 50px!important;
+	margin: 0!important
+  }
+  
+  .swal2-actions .swal2-confirm {
+	background-color: #4084fc !important;
+	color: #fff!important
+  }
+  
+  .swal2-actions .swal2-cancel {
+	background-color: #edf0f5 !important;
+	color: #202020 !important
+  }
+  
+  .swal-confirm-icon {
+	font-size: 10px!important
+  }
+  .swal2-close{
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	width: 15px;
+	height: 15px;
+  }
+  .swal2-checkbox{
+	  margin-top:-10px !important;
+	  margin-bottom: 10px !important;
+  }
+  .swal-confirm-close-btn{
+	// color: rgba(0,0,0,.7);
+	// font-size: 20px;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  
+	&::before,
+	&::after {
+	  content: "";
+	  position: absolute;
+	  width: 2px;
+	  height: 13px;
+	  background-color: rgba(0,0,0,.7);
+	}
+  
+	&::before {
+	  transform: rotate(45deg);
+	}
+  
+	&::after {
+	  transform: rotate(-45deg);
+	}
+  
+  }
+
+.Toastify__toast-container{
+	// bottom: 0px !important;
+	// width: 100% !important;
+	// padding: 0 !important;
+	z-index: 36000 !important;
+	&.Toastify__toast-container--top-center{
+	  top: 7em;
+	  width: fit-content !important;
+	}
+	.Toastify__toast{
+	  min-width:350px;
+	  height:55px;
+	  margin-bottom: 0px !important;
+	  padding: 10px !important;
+	  border-radius: 0 !important;
+	  min-height: unset !important;
+	  // width: fit-content !important;
+		color: #fff !important;
+	  background-color: #74736C !important;
+	  border-radius: 3px !important;
+	}
+	.toast-success{
+	  background-color: #458B00 !important;
+	}
+	.toast-warn{
+	  background-color: rgb(220, 74, 67) !important;
+	}
+	.Toastify__toast-body{
+	  justify-content: center;
+	  margin: unset !important;
+	  padding: 0 6px !important;
+	  color: #fff !important;
+	  &>div:last-child{
+		flex:none;
+		font-size: 14px;
+		color: #fff !important;
+		font-weight: 500;
+	  }
+	  svg{
+		color: #fff;
+		font-size: 20px;
+	  }
+	}
+  }

@@ -2,6 +2,8 @@ import React, {useState, Suspense, lazy} from 'react'
 import logo from './logo.svg';
 import axios from 'axios'
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 import { Route, Routes, BrowserRouter, useLocation, } from "react-router-dom";
 const Main = lazy(() => import("./pages/main/Main"))
 const Test = lazy(() => import("./pages/test/Test"))
@@ -10,6 +12,7 @@ const Playground = lazy(() => import("./pages/playground/Playground"))
 
 function App() {
 	return (
+		<>
 		<BrowserRouter>
 			<Suspense>
 				<Routes>
@@ -24,6 +27,9 @@ function App() {
 				</Routes>
 			</Suspense>
 		</BrowserRouter>
+      <ToastContainer limit={2} closeButton={false} hideProgressBar={true}/>
+		</>
+
 	);
 }
 
