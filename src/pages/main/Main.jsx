@@ -17,6 +17,7 @@ const Main = () => {
 	const coughTimeoutRef = useRef(null); 
 	const currentFailureTimer = useRef(null);
 	const timerRefs = useRef([]);
+	const [plusText, setPlusText] = useState('')
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const play = searchParams.get('play')
 	const setAudio = useBGMStore(state => state.setAudio)
@@ -31,6 +32,18 @@ const Main = () => {
 		timerRefs.current.forEach(clearTimeout);
 		pauseBackgroundSound();
 		setIsBackground(false)
+		setIsBlackScreen(true)
+		setTutorial(false)
+		setTimeout(() => {
+			setIsBlackScreen(false)
+			setIsStart(true)
+		},1000)
+	}
+	const reStartGame = () => {
+		pauseBackgroundSound();
+		setScore(0)
+		setPlusText('')
+		setIsEnding(false)
 		setIsBlackScreen(true)
 		setTutorial(false)
 		setTimeout(() => {
@@ -74,9 +87,15 @@ const Main = () => {
 	},[play]) //화면 첫 렌더때 fart time 끄고 검은 배경 끄고 isStart 세팅 로직
 	return (
 		<>
-			{(isStart && !isBlackScreen && !isBackground && !isEnding && !tutorial) && 
-			<div style={{position:'absolute', left: 20, top: 20, fontFamily:'BMkkubulimTTF-Regular', fontSize:25, zIndex:100}}>
-				{score}
+			{((isStart && !isBlackScreen && !isBackground && !isEnding && !tutorial)) && 
+			<div style={{position:'absolute', height:'40.5px', backgroundColor:'#f1f3df', padding:'5px 10px', alignItems:'center', borderRadius:5, border:'2px dotted #000', display:'flex', left: 20, top: 20, fontFamily:'BMkkubulimTTF-Regular', fontSize:25, zIndex:100}}>
+				<div>
+					{`점수: ${score}`}
+				</div>
+				{!isEnding && plusText&& 
+				<div style={{marginLeft: 20, backgroundColor:'#fff', padding:3, borderRadius:5, border:'1px solid #000'}}>
+					{`${plusText}`}
+				</div>}
 			</div>}
 			<StartScreen 
 				isClicked={isClicked}
@@ -99,8 +118,8 @@ const Main = () => {
 			{/* 검은 화면 */}
 			<></>
 			<Tutorial coughTimeoutRef={coughTimeoutRef} timerRefs={timerRefs} currentFailureTimer={currentFailureTimer} setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
-			<InGame setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
-			<Ending ending={isEnding} score={score}/>
+			<InGame setIsStart={setIsStart} score={score} setPlusText={setPlusText} setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
+			<Ending reStartGame={reStartGame} ending={isEnding} score={score}/>
 		</>
 	);
 };

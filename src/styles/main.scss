@@ -576,7 +576,11 @@
 	color: rgb(145, 113, 69);
 	animation: blink 1s infinite;
 }
-
+.game-narrate-text{
+	color:rgb(141,134,129);
+	font-size:30px;
+	animation: blink 1s infinite;
+}
 @keyframes blink {
   0%, 100% {
     opacity: 1;

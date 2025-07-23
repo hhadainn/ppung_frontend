@@ -6,10 +6,12 @@ import normalImg from '../../../assets/images/suguen.png';      // 50~79점
 import goodJobImg from '../../../assets/images/success.png';    // 80~100점
 import classNames from 'classnames';
 
-const Ending = ({ score, ending }) => {
-  const navigate = useNavigate();
-  const [showRanking, setShowRanking] = useState(false);
 
+const Ending = ({score, ending, reStartGame}) => {
+//   const location = useLocation();
+//   const score = location.state?.score ?? 0;
+
+	const [showRanking, setShowRanking] = useState(false);
   let imageSrc, message, imageClass, animationClass;
 
   if (score < 50) {
@@ -17,7 +19,7 @@ const Ending = ({ score, ending }) => {
     message = '어디서 똥냄새 안 나냐?';
     imageClass = 'ending-image1';
     animationClass = 'side-shake';
-  } else if (score < 80) {
+  } else if (score < 100) {
     imageSrc = normalImg;
     message = '이상한 냄새가 나는 거 같기도...';
     imageClass = 'ending-image2';
@@ -28,10 +30,6 @@ const Ending = ({ score, ending }) => {
     imageClass = 'ending-image3';
     animationClass = 'bounce';
   }
-
-  const handleRetry = () => {
-    navigate('/main');
-  };
 
   return (
   <div className={classNames("ending-container", { 'fade-in': ending }, { 'display-none': !ending })}>
@@ -66,7 +64,7 @@ const Ending = ({ score, ending }) => {
         </div>
       ))}
     </div>
-    <button className="retry-btn" onClick={handleRetry}>
+    <button className="retry-btn" onClick={reStartGame}>
       다시 플레이하기
     </button>
   </div>

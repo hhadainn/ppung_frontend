@@ -52,7 +52,7 @@ const emojiTimings = [
 	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
  ];
 const MAX_COUGH = 6;
-const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
+const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
@@ -68,11 +68,13 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 	const queueRef2 = useRef([]);
 	const queueRef3 = useRef([]);
 	const queueRef4 = useRef([]);
+	const queueRef5 = useRef([]);
 	const startTimeRef = useRef(null);
 	const isProcessingRef = useRef(false);
 	const isProcessingRef2 = useRef(false);
 	const isProcessingRef3 = useRef(false);
 	const isProcessingRef4 = useRef(false);
+	const isProcessingRef5 = useRef(false);
 	const timerRefs = useRef([]);
 	const successEffect = new Howl({ src: [successSound] });
 	const effect = new Howl({ src: [sneezeSound], preload:true });
@@ -136,6 +138,42 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 		  processQueue4(); // 다음 작업 실행
 		}, 100);
 	  };
+	const processQueue5 = () => {
+		if (isProcessingRef5.current || queueRef5.current.length === 0) return;
+	
+		isProcessingRef5.current = true;
+	
+		const task = queueRef5.current.shift();
+		task(); // 실행: 2로 변경
+	
+		// 1로 복구된 후 다음 작업 실행
+		setTimeout(() => {
+		  isProcessingRef5.current = false;
+		  processQueue5(); // 다음 작업 실행
+		}, 100);
+	  };
+	  const resetItem = () => {
+		setIsStart(false)
+		clearTimeout(coughTimeoutRef.current);
+		clearTimeout(currentFailureTimer.current)
+		timerRefs.current.forEach(clearTimeout);
+		currentIndexRef.current = 0;
+		coughSlotIndexRef.current = 0;
+		betweenTimeRef.current = 1.8;
+		queueRef.current = []
+		queueRef2.current = []
+		queueRef3.current = []
+		queueRef4.current = []
+		queueRef5.current = []
+		startTimeRef.current = null
+		isProcessingRef.current = false
+		isProcessingRef2.current = false
+		isProcessingRef3.current = false
+		isProcessingRef4.current = false
+		isProcessingRef5.current = false
+		setCoughSlots(Array(MAX_COUGH).fill({ active: false, key: 0 }))
+		setCurrentClick('')
+	  }
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(isStart){
 			const handleKeyDown = (e) => {
@@ -145,6 +183,7 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 					const index = currentIndexRef.current;
 					const targetTime = emojiTimings[index] + betweenTimeRef.current;
 					const diff = Math.abs(elapsed - targetTime);
+					let text = ''
 					if (diff <= 0.15) {
 						successEffect.play();
 						queueRef4.current.push(() => {
@@ -157,34 +196,52 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 						}
 						if(diff <= 0.01){
 							let score = 3
-							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Great') score +=1
+							text = '+3'
+							if(currentClick == 'Perfect'){
+								score += 2
+								text += '(+2)'
+							}
+							else if(currentClick == 'Great'){
+								score +=1
+								text += '(+1)'
+							}
 							setScore(prev => prev + score)
 							setCurrentClick('Perfect')
 						}
 						else if(diff <= 0.025){
 							let score = 2
-							if(currentClick == 'Perfect') score += 1
-							else if(currentClick == 'Great') score += 0.5
+							text = '+2'
+							if(currentClick == 'Perfect'){
+								score += 1
+								text += '(+1)'
+							}
+							else if(currentClick == 'Great'){
+								score += 0.5
+								text += '(+0.5)'
+							}
 							setScore(prev => prev + score)
 							setCurrentClick('Great')
 						}
 						else if(diff <= 0.05){
 							let score = 1
+							text = '+1'
 							setScore(prev => prev + score)
 							setCurrentClick('Good')
 						}
 						else if(diff <= 0.1){
 							let score = 0.5
+							text = '+0.5'
 							setScore(prev => prev + score)
 							setCurrentClick('Bad')
 						}
 						else{
+							text = '+0'
 							setCurrentClick('Poor')
 						}
 						if (index >= emojiTimings.length) {
 							setTimeout(() => {
 								setIsEnding(true);
+								resetItem()
 							}, 3000); // 1초 후 ending으로 이동
 							return;
 						}
@@ -199,9 +256,15 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 							setTimeout(() => setWhenFail(false), 150)
 						})
 						processQueue3();
+						text = '-1'
 						setCurrentClick('Miss')
 						setScore(prev => prev >= 1 ? prev - 1 : 0)
 					}
+					queueRef5.current.push(() => {
+						setPlusText(text);
+						setTimeout(() => setPlusText(''), 150)
+					})
+					processQueue5();
 					queueRef.current.push(() => {
 						setIsFartClicked(true);
 						setTimeout(() => setIsFartClicked(false), 150)
@@ -235,11 +298,17 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 			if (index == 93) {
 			  betweenTimeRef.current = 3.53;
 			}
+			queueRef5.current.push(() => {
+				setPlusText('-1');
+				setTimeout(() => setPlusText(''), 150)
+			})
+			processQueue5();
 			setCurrentClick('Miss')
 			setScore(prev => prev >= 1 ? prev - 1 : 0)
 			if (index >= emojiTimings.length) {
 				setTimeout(() => {
 					setIsEnding(true);
+					resetItem()
 				}, 3000); // 1초 후 ending으로 이동
 				return;
 			}

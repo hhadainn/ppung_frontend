@@ -16,7 +16,7 @@ const StartScreen = ({isClicked, isBackground, onClick}) => {
 				<div style={{fontSize:200, fontWeight:700, color:'#897d5f'}}>Fart</div>
 				<div style={{fontSize:200, fontWeight:700, color:'#897d5f'}}>Time!</div>
 				<div style={{fontSize:50, fontWeight:700, marginTop:30, color:'#897d5f'}}>[방구 타임!]</div>
-				{!isClicked && <div style={{fontSize:30, color:'rgb(141,134,129)'}}>시작하려면 화면을 클릭하세요!</div>}
+				{!isClicked && <div className="game-narrate-text">시작하려면 화면을 클릭하세요!</div>}
 
 			</div>
 		</div>

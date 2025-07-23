@@ -66,9 +66,12 @@ const LoginUI = () => {
   const verifyEmail = async () => {
     try {
       const res = await axios.post(url + '/user/verify/email', { email: joinusername });
-      if (res.data.message === 'exist') {
+      if (res.data.message === 'is_send') {
         alert('이미 발송했습니다.');
-      } else {
+      } else if(res.data.message === 'is_user'){
+        alert('사용할 수 없는 이메일입니다.');
+		setjoinUsername('')
+	  } else {
         alert('이메일 발송 완료');
       }
     } catch (e) {
