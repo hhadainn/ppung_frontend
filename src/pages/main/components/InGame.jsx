@@ -158,22 +158,22 @@ const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutori
 						if(diff <= 0.05){
 							let score = 3
 							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
+							else if(currentClick == 'Great') score +=1
 							setScore(prev => prev + score)
 							setCurrentClick('Perfect')
 						}
 						else if(diff <= 0.1){
 							let score = 2
 							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
+							else if(currentClick == 'Great') score +=1
 							setScore(prev => prev + score)
-							setCurrentClick('Good')
+							setCurrentClick('Great')
 						}
 						else{
 							let score = 2
 							if(currentClick == 'Perfect') score += 2
-							else if(currentClick == 'Good') score +=1
-							setCurrentClick('Bad')
+							else if(currentClick == 'Great') score +=1
+							setCurrentClick('Good')
 							setScore(prev => prev + 1)
 						}
 						if (index >= emojiTimings.length) {
