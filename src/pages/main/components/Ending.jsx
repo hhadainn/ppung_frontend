@@ -15,7 +15,6 @@ const Ending = ({score,email, ending, reStartGame}) => {
 
 	const [showRanking, setShowRanking] = useState(false);
   let imageSrc, message, imageClass, animationClass;
-
   if (score < 50) {
     imageSrc = sugeunImg;
     message = '어디서 똥냄새 안 나냐?';
