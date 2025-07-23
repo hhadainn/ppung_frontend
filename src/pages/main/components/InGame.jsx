@@ -23,6 +23,8 @@ import { PiNumberCircleTwoLight } from "react-icons/pi";
 import { PiNumberCircleThreeLight } from "react-icons/pi";
 import { PiNumberCircleFourLight } from "react-icons/pi";
 import classNames from 'classnames';
+import useMutateUpdateScore from '../../../hooks/mutation/useMutateUpdateScore';
+import Loading from '../../../components/Loading';
 
 const emojiTimings = [
 	7.5, 7.84, 8.18, 
@@ -52,7 +54,7 @@ const emojiTimings = [
 	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
  ];
 const MAX_COUGH = 6;
-const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
+const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
@@ -110,6 +112,19 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 		  processQueue2(); // 다음 작업 실행
 		}, 100);
 	  };
+	  const handleUpdateScore = () => {
+		const email = window.localStorage.getItem('ppung_email')
+		if(!email) return;
+		mutateUpdateScore({email: email, score: myScore})
+	  }
+	  const {mutate: mutateUpdateScore, isPending: loadingUpdateScore} = useMutateUpdateScore({
+		onSuccess:(data) => {
+			setTimeout(() => {
+				setIsEnding(true);
+				resetItem()
+			}, 3000);
+		}
+	  })
 	const processQueue3 = () => {
 		if (isProcessingRef3.current || queueRef3.current.length === 0) return;
 	
@@ -239,10 +254,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 							setCurrentClick('Poor')
 						}
 						if (index >= emojiTimings.length) {
-							setTimeout(() => {
-								setIsEnding(true);
-								resetItem()
-							}, 3000); // 1초 후 ending으로 이동
+							handleUpdateScore() // 1초 후 ending으로 이동
 							return;
 						}
 						if (currentFailureTimer.current) clearTimeout(currentFailureTimer.current); // ⛔ 중복 방지
@@ -306,10 +318,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 			setCurrentClick('Miss')
 			setScore(prev => prev >= 1 ? prev - 1 : 0)
 			if (index >= emojiTimings.length) {
-				setTimeout(() => {
-					setIsEnding(true);
-					resetItem()
-				}, 3000); // 1초 후 ending으로 이동
+				handleUpdateScore()
 				return;
 			}
 			currentIndexRef.current += 1;
@@ -430,92 +439,95 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 		};
 	  }, [isStart]);
 	return(
-		<div 
-			className={classNames("viewport", {'fade-out' : isEnding}, {'fade-in' : !tutorial && !isEnding}, {'display-none' : tutorial})}
-		>
-			<div className={`comic-board zoom-${zoomState}`}>
-				{/* 네 컷 위치 고정 */}
-				<div className="row top-row">
-					<div className='container'></div>
-					<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
-					{coughSlots.map(({active, key}, i) => {
-						if(!active) return null
-						return(
-							<CaughSound key={key} className={'caugh-sound ' + (betweenTimeRef.current == 1.8 ? 'fly-left2right' : 'fly-left2right2')}/>
-						)
-					})}
-					<div className="panel">
-						{zoomState == '1' && 
-						<div style={{position:'absolute', right:10, top: 10}}>
-							<PiNumberCircleOneLight style={{width:50, height:50}}/>
-						</div>}
-						<img
-							className="bottom-left-image"
-							src={isCoughClicked ? coughImg : cough_standing}
-							alt="Cough Character"
-						/>
-						{isCoughClicked && 
-						<div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#0F0FB9', position:'absolute', left:180, bottom:120}}>
-							<p style={{margin:0}}>에</p>
-							<p style={{margin:0}}>취</p>
-						</div>}
-					</div>
-					<div className="panel">
-						{zoomState == '1' && 
-						<div style={{position:'absolute', right:10, top: 10}}>
-							<PiNumberCircleTwoLight style={{width:50, height:50}}/>
-						</div>}
-						<img
-							className="bottom-right-image"
-							src={whenFail ? fartFailImg : (whenSuccess ? fartImg : fart_standingImg)}
-							alt="Fart Character"
-						/>
-						{whenFail && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:220, bottom:130}}>
-							<p style={{margin:0}}>뿌</p>
-							<p style={{margin:0}}>웅</p>
-						</div>}
-						{(isFartClicked || whenFail) && 
-						<div 
-							className={classNames('click-type', 
-									{'perfect-color': currentClick == 'Perfect'},
-									{'great-color': currentClick == 'Great'},
-									{'good-color': currentClick == 'Good'},
-									{'bad-color': currentClick == 'Bad'},
-									{'poor-color': currentClick == 'Poor'},
-									{'miss-color': currentClick == 'Miss'},
-							)}
-						>
-							{currentClick}
-						</div>}
-						{(whenFail) && 
-						<img
-							src={fartPoop}
-							className='poop-style'
-						/>
-						}
-						{isFartClicked && 
-							<FartWind
-								style={{position:'absolute', right:200, bottom:45, height:100, width:100}}
+		<>
+			<Loading loading={loadingUpdateScore}/>
+			<div 
+				className={classNames("viewport", {'fade-out' : isEnding}, {'fade-in' : !tutorial && !isEnding}, {'display-none' : tutorial})}
+			>
+				<div className={`comic-board zoom-${zoomState}`}>
+					{/* 네 컷 위치 고정 */}
+					<div className="row top-row">
+						<div className='container'></div>
+						<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>
+						{coughSlots.map(({active, key}, i) => {
+							if(!active) return null
+							return(
+								<CaughSound key={key} className={'caugh-sound ' + (betweenTimeRef.current == 1.8 ? 'fly-left2right' : 'fly-left2right2')}/>
+							)
+						})}
+						<div className="panel">
+							{zoomState == '1' && 
+							<div style={{position:'absolute', right:10, top: 10}}>
+								<PiNumberCircleOneLight style={{width:50, height:50}}/>
+							</div>}
+							<img
+								className="bottom-left-image"
+								src={isCoughClicked ? coughImg : cough_standing}
+								alt="Cough Character"
 							/>
-						}
+							{isCoughClicked && 
+							<div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#0F0FB9', position:'absolute', left:180, bottom:120}}>
+								<p style={{margin:0}}>에</p>
+								<p style={{margin:0}}>취</p>
+							</div>}
+						</div>
+						<div className="panel">
+							{zoomState == '1' && 
+							<div style={{position:'absolute', right:10, top: 10}}>
+								<PiNumberCircleTwoLight style={{width:50, height:50}}/>
+							</div>}
+							<img
+								className="bottom-right-image"
+								src={whenFail ? fartFailImg : (whenSuccess ? fartImg : fart_standingImg)}
+								alt="Fart Character"
+							/>
+							{whenFail && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:220, bottom:130}}>
+								<p style={{margin:0}}>뿌</p>
+								<p style={{margin:0}}>웅</p>
+							</div>}
+							{(isFartClicked || whenFail) && 
+							<div 
+								className={classNames('click-type', 
+										{'perfect-color': currentClick == 'Perfect'},
+										{'great-color': currentClick == 'Great'},
+										{'good-color': currentClick == 'Good'},
+										{'bad-color': currentClick == 'Bad'},
+										{'poor-color': currentClick == 'Poor'},
+										{'miss-color': currentClick == 'Miss'},
+								)}
+							>
+								{currentClick}
+							</div>}
+							{(whenFail) && 
+							<img
+								src={fartPoop}
+								className='poop-style'
+							/>
+							}
+							{isFartClicked && 
+								<FartWind
+									style={{position:'absolute', right:200, bottom:45, height:100, width:100}}
+								/>
+							}
+						</div>
 					</div>
-				</div>
-				<div className="row bottom-row">
-					<div className="panel">
-						{zoomState == '1' && 
-						<div style={{position:'absolute', right:10, top: 10}}>
-							<PiNumberCircleThreeLight style={{width:50, height:50}}/>
-						</div>}
-					</div>
-					<div className="panel">
-						{zoomState == '1' && 
-						<div style={{position:'absolute', right:10, top: 10}}>
-							<PiNumberCircleFourLight style={{width:50, height:50}}/>
-						</div>}
+					<div className="row bottom-row">
+						<div className="panel">
+							{zoomState == '1' && 
+							<div style={{position:'absolute', right:10, top: 10}}>
+								<PiNumberCircleThreeLight style={{width:50, height:50}}/>
+							</div>}
+						</div>
+						<div className="panel">
+							{zoomState == '1' && 
+							<div style={{position:'absolute', right:10, top: 10}}>
+								<PiNumberCircleFourLight style={{width:50, height:50}}/>
+							</div>}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 export default InGame

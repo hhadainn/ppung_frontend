@@ -118,7 +118,7 @@ const Main = () => {
 			{/* 검은 화면 */}
 			<></>
 			<Tutorial coughTimeoutRef={coughTimeoutRef} timerRefs={timerRefs} currentFailureTimer={currentFailureTimer} setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
-			<InGame setIsStart={setIsStart} score={score} setPlusText={setPlusText} setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
+			<InGame myScore={score} setIsStart={setIsStart} setPlusText={setPlusText} setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
 			<Ending reStartGame={reStartGame} ending={isEnding} score={score}/>
 		</>
 	);

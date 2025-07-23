@@ -30,6 +30,7 @@ const LoginUI = () => {
   const allFieldsFilled = joinusername && joinpassword && confirmPassword;
 
 	const handleLogin = () => {
+		if(loadingCheckEmail|| loadingLogin || loadingVerifyEmail || loadingCreateUser) return;
 		if(!username){
 			AlertToast({toastId:'login',text: '아이디를 입력해주세요.'})
 			return;
@@ -40,19 +41,20 @@ const LoginUI = () => {
 		}
 		mutateLogin({password: password, email: username})
 	}
-	const {mutate: mutateLogin, isLoading: loadingLogin} = useMutateLogin({
+	const {mutate: mutateLogin, isPending: loadingLogin} = useMutateLogin({
 		onSuccess:(data) => {
 			if (data.message === 'success') {
+				window.localStorage.setItem('ppung_email', data.email)
 				AlertToast({toastId:'login',text: '로그인 성공', type:'success'});
 				pauseBackgroundSound(); 
 				navigate('/main?play=true');
 			  } else {
-				console.log('123123')
 				AlertToast({toastId:'login',text: '로그인 실패', isWarnIcon:true, type:'warn'});
 			  }
 		}
 	})
   const handleCreateUser = () => {
+	if(loadingCheckEmail|| loadingLogin || loadingVerifyEmail || loadingCreateUser) return;
 	if(!successVerify){
 
 		AlertToast({toastId:'login',text: '이메일 인증을 진행해주세요.'})
@@ -60,7 +62,7 @@ const LoginUI = () => {
 	}
 	mutateCreateUser({password: joinpassword, email: joinusername, name: name})
   }
-  const {mutate: mutateCreateUser, isLoading: loadingCreateUser} = useMutateCreateUser({
+  const {mutate: mutateCreateUser, isPending: loadingCreateUser} = useMutateCreateUser({
 	onSuccess:(data) => {
 		if (data.message === 'exist') {
 			AlertToast({toastId:'login',text: '이미 존재합니다', isWarnIcon: true, type:'warn'});
@@ -72,11 +74,12 @@ const LoginUI = () => {
 	}
   })
   const handleVerifyEmail = () => {
+	if(loadingCheckEmail|| loadingLogin || loadingVerifyEmail || loadingCreateUser) return;
 
 	if(successVerify) return;
 	mutateVerifyEmail({email: joinusername})
   }
-  const {mutate: mutateVerifyEmail, isLoading: loadingVerifyEmail} = useMutateVerifyEmail({
+  const {mutate: mutateVerifyEmail, isPending: loadingVerifyEmail} = useMutateVerifyEmail({
 	onSuccess:(data) => {
 		if (data.message === 'is_send') {
 			AlertToast({toastId:'login',text: '이미 발송했습니다.'});
@@ -90,10 +93,11 @@ const LoginUI = () => {
   })
   const handleCheckEmail = () => {
 
+	if(loadingCheckEmail|| loadingLogin || loadingVerifyEmail || loadingCreateUser) return;
 	if(successVerify) return;
 	mutateCheckEmail({email: joinusername, code: code})
   }
-  const {mutate: mutateCheckEmail, isLoading: loadingCheckEmail} = useMutateCheckEmail({
+  const {mutate: mutateCheckEmail, isPending: loadingCheckEmail} = useMutateCheckEmail({
 	onSuccess:(data) => {
 		if (data.message === 'success') {
 			setSuccessVerify(true)
@@ -132,10 +136,9 @@ const LoginUI = () => {
   isPasswordValid
 ]);
 
-
   return (
 	<>
-	<Loading loading={loadingCheckEmail || loadingLogin || loadingVerifyEmail || loadingCreateUser}/>
+	<Loading loading={loadingCheckEmail|| loadingLogin || loadingVerifyEmail || loadingCreateUser}/>
 		<div className='login-container'>
 		{isMember ? (
 			<>
