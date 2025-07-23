@@ -5,6 +5,7 @@ import '../../../styles/main.scss';
 import fartImg from '../../../assets/images/fart_farting.png';
 import fartPoop from '../../../assets/images/fart_poop.png';
 import fartFailImg from '../../../assets/images/fart_failed.png';
+import nubzuki from '../../../assets/images/ppung_nubzuki.png'
 import fart_standingImg from '../../../assets/images/fart_standing.png';
 import coughImg from '../../../assets/images/cough.png';
 import cough_standing from '../../../assets/images/cough_stand.png';
@@ -54,10 +55,11 @@ const emojiTimings = [
 	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
  ];
 const MAX_COUGH = 6;
-const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
+const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomState, setIsEnding, tutorial, email, isStart}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
+	const scoreRef = useRef(0)
 	const [coughSlots, setCoughSlots] = useState(Array(MAX_COUGH).fill({ active: false, key: 0 }))
 	const coughSlotIndexRef = useRef(0);
 	let uniqueKeyCounter = useRef(0);
@@ -113,9 +115,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 		}, 100);
 	  };
 	  const handleUpdateScore = () => {
-		const email = window.localStorage.getItem('ppung_email')
-		if(!email) return;
-		mutateUpdateScore({email: email, score: myScore})
+		mutateUpdateScore({email: email, score: scoreRef.current})
 	  }
 	  const {mutate: mutateUpdateScore, isPending: loadingUpdateScore} = useMutateUpdateScore({
 		onSuccess:(data) => {
@@ -210,43 +210,47 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 						  betweenTimeRef.current = 3.53;
 						}
 						if(diff <= 0.01){
-							let score = 3
+							let num = 3
 							text = '+3'
 							if(currentClick == 'Perfect'){
-								score += 2
+								num += 2
 								text += '(+2)'
 							}
 							else if(currentClick == 'Great'){
-								score +=1
+								num +=1
 								text += '(+1)'
 							}
-							setScore(prev => prev + score)
+							scoreRef.current += num
+							setScore(prev => prev + num)
 							setCurrentClick('Perfect')
 						}
 						else if(diff <= 0.025){
-							let score = 2
+							let num = 2
 							text = '+2'
 							if(currentClick == 'Perfect'){
-								score += 1
+								num += 1
 								text += '(+1)'
 							}
 							else if(currentClick == 'Great'){
-								score += 0.5
+								num += 0.5
 								text += '(+0.5)'
 							}
-							setScore(prev => prev + score)
+							scoreRef.current += num
+							setScore(prev => prev + num)
 							setCurrentClick('Great')
 						}
 						else if(diff <= 0.05){
-							let score = 1
+							let num = 1
 							text = '+1'
-							setScore(prev => prev + score)
+							scoreRef.current += num
+							setScore(prev => prev + num)
 							setCurrentClick('Good')
 						}
 						else if(diff <= 0.1){
-							let score = 0.5
+							let num = 0.5
 							text = '+0.5'
-							setScore(prev => prev + score)
+							scoreRef.current += num
+							setScore(prev => prev + num)
 							setCurrentClick('Bad')
 						}
 						else{
@@ -270,7 +274,13 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 						processQueue3();
 						text = '-1'
 						setCurrentClick('Miss')
-						setScore(prev => prev >= 1 ? prev - 1 : 0)
+						if(scoreRef.current >= 1) scoreRef.current -= 1
+						else scoreRef.current = 0
+						setScore(prev => {
+							let item = prev
+							if(item >= 1) return item - 1
+							return 0
+						})
 					}
 					queueRef5.current.push(() => {
 						setPlusText(text);
@@ -316,7 +326,13 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 			})
 			processQueue5();
 			setCurrentClick('Miss')
-			setScore(prev => prev >= 1 ? prev - 1 : 0)
+			if(scoreRef.current >= 1) scoreRef.current -= 1
+			else scoreRef.current = 0
+			setScore(prev => {
+				let item = prev
+				if(item >= 1) return item - 1
+				return 0
+			})
 			if (index >= emojiTimings.length) {
 				handleUpdateScore()
 				return;
@@ -408,15 +424,15 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 			[77.6, 'left1'],
 			[79.4, 'right1'],
 			[81.4, 'left3'],
-			[83.2,'right4'],
+			[83.2,'right4'], //넙죽이
 			[85.1, 'left1'],
 			[86.9, 'right1'],
-			[88.6, 'left4'],
-			[89.1, 'left5'],
-			[89.6, 'left6'],
-			[90.5, 'right5'],
-			[91.0, 'right6'],
-			[91.5, 'right7'],
+			[88.6, 'left4'], 
+			[89.1, 'left5'], 
+			[89.6, 'left6'], 
+			[90.5, 'right5'],//넙죽이
+			[91.0, 'right6'],//넙죽이
+			[91.5, 'right7'],//넙죽이
 			[92.4, '2'],
 			[106.8, '1']
 			
@@ -443,9 +459,28 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, myScore, setScore, s
 			<Loading loading={loadingUpdateScore}/>
 			<div 
 				className={classNames("viewport", {'fade-out' : isEnding}, {'fade-in' : !tutorial && !isEnding}, {'display-none' : tutorial})}
+				// onClick={() => handleUpdateScore()}
 			>
 				<div className={`comic-board zoom-${zoomState}`}>
 					{/* 네 컷 위치 고정 */}
+					{(zoomState == 'min0' || zoomState == 'min1' || zoomState == 'min2' || zoomState == 'min3' || zoomState == 'min4' || zoomState == 'min5') &&
+					<img
+						className='nubuki-style'
+						src={nubzuki}
+						alt='nubzuki'
+					/>}
+					{zoomState == 'right4' &&
+					<img
+						className='nubuki-style2'
+						src={nubzuki}
+						alt='nubzuki'
+					/>}
+					{(zoomState == 'right5' || zoomState == 'right6' || zoomState == 'right7') &&
+					<img
+						className='nubuki-style3'
+						src={nubzuki}
+						alt='nubzuki'
+					/>}
 					<div className="row top-row">
 						<div className='container'></div>
 						<div style={{position:'absolute', left:493, width:15, height:'100%', backgroundColor:'#f1f3df', zIndex:10}}/>

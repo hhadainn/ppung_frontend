@@ -146,6 +146,7 @@
 
 .ranking-list {
   width: 100%;
+  min-height:300px;
   max-height: 80%; /* 리스트 최대 높이 제한 */
   overflow-y: auto;
   padding-left: 40px;

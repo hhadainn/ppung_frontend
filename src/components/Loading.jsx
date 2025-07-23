@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Line } from 'rc-progress';
 
 const Container = styled.div`
-    position: ${props => props.absolute ? 'absolute' : 'fixed'};
+    position: fixed;
     width: 100%;
     height: 100%;
     display: flex;
@@ -51,7 +51,7 @@ const Container = styled.div`
 const Loading = ({loading = false, className='',label,  isProgress = false, percent = 0, absolute = false}) => {
     return(
         loading &&
-        <Container absolute={absolute} className={className}>
+        <Container className={className}>
             <MoonLoader
                 color="#444"
             />

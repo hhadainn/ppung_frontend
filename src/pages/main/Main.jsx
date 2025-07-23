@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import InGame from './components/InGame';
 import Tutorial from './components/Tutorial';
 import Ending from './components/Ending';
+import useMutateUpdateScore from '../../hooks/mutation/useMutateUpdateScore';
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
 	const [tutorial, setTutorial] = useState(true)
@@ -20,6 +21,7 @@ const Main = () => {
 	const [plusText, setPlusText] = useState('')
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const play = searchParams.get('play')
+	const [email, setEmail] = useState('')
 	const setAudio = useBGMStore(state => state.setAudio)
 	const [isClicked, setIsClicked] = useState(false)
 	const [isBackground, setIsBackground] = useState(true)
@@ -51,6 +53,10 @@ const Main = () => {
 			setIsStart(true)
 		},1000)
 	}
+	useEffect(() => {
+		const item = window.localStorage.getItem('ppung_email')
+		setEmail(item)
+	},[])
 	// const handleKeyDown = (e) => {
 	// 	if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
 	// 	e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
@@ -118,8 +124,8 @@ const Main = () => {
 			{/* 검은 화면 */}
 			<></>
 			<Tutorial coughTimeoutRef={coughTimeoutRef} timerRefs={timerRefs} currentFailureTimer={currentFailureTimer} setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
-			<InGame myScore={score} setIsStart={setIsStart} setPlusText={setPlusText} setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
-			<Ending reStartGame={reStartGame} ending={isEnding} score={score}/>
+			<InGame email={email} setIsStart={setIsStart} setPlusText={setPlusText} setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
+			<Ending email={email} reStartGame={reStartGame} ending={isEnding} score={score}/>
 		</>
 	);
 };

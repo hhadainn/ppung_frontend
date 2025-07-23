@@ -3,6 +3,7 @@ import axios from 'axios'
 import url from '../../utils/backend'
 import digestPW from "../../utils/digestPw";
 const updateScore = async ({email, score}) => {
+	console.log(score, 2)
 	const res = await axios.post(url + '/user/score', { email: email, score: score });
 	return res.data
   };
