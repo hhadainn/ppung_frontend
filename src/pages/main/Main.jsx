@@ -8,19 +8,22 @@ import introSound from '../../assets/audio/intro_background.mp3';
 import { useSearchParams } from 'react-router-dom';
 import InGame from './components/InGame';
 import Tutorial from './components/Tutorial';
+import Ending from './components/Ending';
 const Main = () => {
 	const [zoomState, setZoomState] = useState(null);
 	const [tutorial, setTutorial] = useState(true)
 	const [searchParams, setSearchParams] = useSearchParams()
+	const [isEnding, setIsEnding] = useState(false)
 	const pauseBackgroundSound = useBGMStore(state => state.pause)
 	const play = searchParams.get('play')
 	const setAudio = useBGMStore(state => state.setAudio)
 	const [isClicked, setIsClicked] = useState(false)
 	const [isBackground, setIsBackground] = useState(true)
+	const [score, setScore] = useState(0)
 	const [isBlackScreen, setIsBlackScreen] = useState(true)
 	const [isStart, setIsStart] = useState(false)
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
-		if(tutorial){
+		if(tutorial && isClicked){
 			const handleKeyDown = (e) => {
 				if(e.key === 'Escape'){
 					pauseBackgroundSound();
@@ -36,7 +39,7 @@ const Main = () => {
 			window.addEventListener('keydown', handleKeyDown);
 			return () => window.removeEventListener('keydown', handleKeyDown);
 		}
-	},[tutorial])
+	},[tutorial, isClicked])
 	useEffect(() => {
 		if(play === 'true'){
 			setIsClicked(true);
@@ -56,7 +59,12 @@ const Main = () => {
 	},[play]) //화면 첫 렌더때 fart time 끄고 검은 배경 끄고 isStart 세팅 로직
 	return (
 		<>
+			{(isStart && !isBlackScreen && !isBackground && !isEnding && !tutorial) && 
+			<div style={{position:'absolute', left: 20, top: 20, fontFamily:'BMkkubulimTTF-Regular', fontSize:25, zIndex:100}}>
+				{score}
+			</div>}
 			<StartScreen 
+				isClicked={isClicked}
 				isBackground={isBackground}
 				onClick={() =>{
 					if(play !== 'true' && isBackground && !isClicked){
@@ -67,10 +75,10 @@ const Main = () => {
 			/> 
 			<BlackScreen isBlackScreen={isBlackScreen}/> 
 			{/* 검은 화면 */}
-			{tutorial
-			?	<Tutorial setStartGame={setIsStart} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
-			:	<InGame isStart={isStart} zoomState={zoomState} setZoomState={setZoomState}/>
-			}
+			<></>
+			<Tutorial setStartGame={setIsStart} tutorial={tutorial} setIsBlackScreen={setIsBlackScreen} setTutorial={setTutorial} isBlackScreen={isBlackScreen}/>
+			<InGame setIsEnding={setIsEnding} isEnding={isEnding} setScore={setScore} isStart={isStart} tutorial={tutorial} zoomState={zoomState} setZoomState={setZoomState}/>
+			<Ending ending={isEnding} score={score}/>
 		</>
 	);
 };

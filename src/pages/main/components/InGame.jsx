@@ -18,6 +18,11 @@ import sneezeSound from '../../../assets/audio/sneeze.mp3'; // 경로 주의
 import failSound from '../../../assets/audio/fail_effect.mp3'; // 경로 주의
 import successSound from '../../../assets/audio/success_effect.mp3'; // 경로 주의
 import { useNavigate } from 'react-router-dom';
+import { PiNumberCircleOneLight } from "react-icons/pi";
+import { PiNumberCircleTwoLight } from "react-icons/pi";
+import { PiNumberCircleThreeLight } from "react-icons/pi";
+import { PiNumberCircleFourLight } from "react-icons/pi";
+import classNames from 'classnames';
 
 const emojiTimings = [
 	7.5, 7.84, 8.18, 
@@ -47,9 +52,7 @@ const emojiTimings = [
 	99.674,100.642,101.255,101.868 // 처음치는 순간: 103.170
  ];
 const MAX_COUGH = 6;
-const InGame = ({zoomState, setZoomState, isStart}) => {
-	const navigate = useNavigate();
-	const [currentIndex, setCurrentIndex] = useState(0)
+const InGame = ({zoomState,isEnding, setScore, setZoomState, setIsEnding, tutorial, isStart}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
@@ -59,7 +62,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	const [whenSuccess, setWhenSuccess] = useState(false)
 	const currentFailureTimer = useRef(null);
 	const betweenTimeRef = useRef(1.8); // 초기값
-
+	const [currentClick, setCurrentClick] = useState('')
 	// 최신 값을 바꾸고 싶을 때:
 	const queueRef = useRef([]);
 	const queueRef2 = useRef([]);
@@ -152,6 +155,33 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 						if (index == 93) {
 						  betweenTimeRef.current = 3.53;
 						}
+						if(diff <= 0.05){
+							let score = 3
+							if(currentClick == 'Perfect') score += 2
+							else if(currentClick == 'Good') score +=1
+							setScore(prev => prev + score)
+							setCurrentClick('Perfect')
+						}
+						else if(diff <= 0.1){
+							let score = 2
+							if(currentClick == 'Perfect') score += 2
+							else if(currentClick == 'Good') score +=1
+							setScore(prev => prev + score)
+							setCurrentClick('Good')
+						}
+						else{
+							let score = 2
+							if(currentClick == 'Perfect') score += 2
+							else if(currentClick == 'Good') score +=1
+							setCurrentClick('Bad')
+							setScore(prev => prev + 1)
+						}
+						if (index >= emojiTimings.length) {
+							setTimeout(() => {
+								setIsEnding(true);
+							}, 3000); // 1초 후 ending으로 이동
+							return;
+						}
 						if (currentFailureTimer.current) clearTimeout(currentFailureTimer.current); // ⛔ 중복 방지
 						currentIndexRef.current += 1;
 						scheduleNextFailure();
@@ -163,6 +193,8 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 							setTimeout(() => setWhenFail(false), 150)
 						})
 						processQueue3();
+						setCurrentClick('Miss')
+						setScore(prev => prev >= 1 ? prev - 1 : 0)
 					}
 					queueRef.current.push(() => {
 						setIsFartClicked(true);
@@ -178,12 +210,6 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	
 	const scheduleNextFailure = () => { //timings 배열 마다 있는 시간 + 1.8초 후에 안눌리면 fail로직 발동시키고 index하나증가시켜서 다음 차례 시간 + 1.8초 검사할 수 있게 ㅅ케쥴링
 		const index = currentIndexRef.current;
-		if (index >= emojiTimings.length) {
-		setTimeout(() => {
-			navigate('/ending');
-		}, 1000); // 1초 후 ending으로 이동
-		return;
-		}
 	  
 		const now = performance.now();
 		const delay = (emojiTimings[index] + betweenTimeRef.current) * 1000 - (now - startTimeRef.current);
@@ -202,6 +228,14 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 			processQueue3();
 			if (index == 93) {
 			  betweenTimeRef.current = 3.53;
+			}
+			setCurrentClick('Miss')
+			setScore(prev => prev >= 1 ? prev - 1 : 0)
+			if (index >= emojiTimings.length) {
+				setTimeout(() => {
+					setIsEnding(true);
+				}, 3000); // 1초 후 ending으로 이동
+				return;
 			}
 			currentIndexRef.current += 1;
 			scheduleNextFailure(); // 다음 실패 예약
@@ -322,7 +356,7 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 	  }, [isStart]);
 	return(
 		<div 
-			className="viewport" 
+			className={classNames("viewport", {'fade-out' : isEnding}, {'fade-in' : !tutorial && !isEnding}, {'display-none' : tutorial})}
 		>
 			<div className={`comic-board zoom-${zoomState}`}>
 				{/* 네 컷 위치 고정 */}
@@ -336,6 +370,10 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 						)
 					})}
 					<div className="panel">
+						{zoomState == '1' && 
+						<div style={{position:'absolute', right:10, top: 10}}>
+							<PiNumberCircleOneLight style={{width:50, height:50}}/>
+						</div>}
 						<img
 							className="bottom-left-image"
 							src={isCoughClicked ? coughImg : cough_standing}
@@ -348,6 +386,10 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 						</div>}
 					</div>
 					<div className="panel">
+						{zoomState == '1' && 
+						<div style={{position:'absolute', right:10, top: 10}}>
+							<PiNumberCircleTwoLight style={{width:50, height:50}}/>
+						</div>}
 						<img
 							className="bottom-right-image"
 							src={whenFail ? fartFailImg : (whenSuccess ? fartImg : fart_standingImg)}
@@ -356,6 +398,9 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 						{whenFail && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:220, bottom:130}}>
 							<p style={{margin:0}}>뿌</p>
 							<p style={{margin:0}}>웅</p>
+						</div>}
+						{isFartClicked && <div style={{fontFamily:'BMkkubulimTTF-Regular', color:'#883615', position:'absolute', right:300, bottom:130}}>
+							{currentClick}
 						</div>}
 						{(whenFail) && 
 						<img
@@ -371,8 +416,18 @@ const InGame = ({zoomState, setZoomState, isStart}) => {
 					</div>
 				</div>
 				<div className="row bottom-row">
-					<div className="panel"></div>
-					<div className="panel"></div>
+					<div className="panel">
+						{zoomState == '1' && 
+						<div style={{position:'absolute', right:10, top: 10}}>
+							<PiNumberCircleThreeLight style={{width:50, height:50}}/>
+						</div>}
+					</div>
+					<div className="panel">
+						{zoomState == '1' && 
+						<div style={{position:'absolute', right:10, top: 10}}>
+							<PiNumberCircleFourLight style={{width:50, height:50}}/>
+						</div>}
+					</div>
 				</div>
 			</div>
 		</div>

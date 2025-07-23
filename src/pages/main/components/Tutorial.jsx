@@ -19,6 +19,7 @@ import failSound from '../../../assets/audio/fail_effect.mp3'; // 경로 주의
 import { AiFillCaretDown } from "react-icons/ai";
 
 import successSound from '../../../assets/audio/success_effect.mp3'; // 경로 주의
+import classNames from 'classnames';
 const emojiTimings = [
 	0, 0.5, 1.0, 3.7, 4.2, 4.7, 7.4, 7.9, 8.4
  ];
@@ -33,10 +34,10 @@ const reTutorialList = [
 	'다시 해봅시다!',
 ]
 const finishTutorialList = [
-	'상당한 실력자시네요!',
+	'상당한 방구쟁이시네요!',
 	'아직 방귀는 많이 남았으니, 본격적으로 껴봅시다!',
 ]
-const Tutorial = ({isBlackScreen,setIsBlackScreen, setStartGame, setTutorial}) => {
+const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setTutorial}) => {
 	const currentIndexRef = useRef(0)
 	const [whenFail, setWhenFail] = useState(false)
 	const coughTimeoutRef = useRef(null); 
@@ -321,8 +322,9 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, setStartGame, setTutorial}) =
 		}
 	  },[currentIndex])
 	return(
-		<div 
-			className="viewport" 
+		<div
+			style={{zIndex:5}} 
+			className={classNames("viewport", {'fade-in' : !isBlackScreen && tutorial}, {'fade-out' : !tutorial})}
 		>
 			<div className={`comic-board zoom-tutorial`}>
 				{!isStart && 

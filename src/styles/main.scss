@@ -187,6 +187,9 @@
 	overflow:hidden;
 	position:relative;
 }
+.display-none{
+	display:none !important;
+}
 .comic-board {
 	position: absolute;
 	width: 1000px;
@@ -384,12 +387,31 @@
 
 }
 @keyframes fadeOut {
-	from {
+	0% {
 	  opacity: 1;
 	}
-	to {
+	99% {
 	  opacity: 0;
 	  visibility: hidden;
+	}
+	100%{
+		opacity: 0;
+		visibility: hidden;
+		display:none;
+	}
+  }
+.fade-in{
+	animation: fadeIn 0.5s ease-out forwards;
+
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		visibility: hidden;
+	}
+	to {
+	  opacity: 1;
+	  visibility: visible;
 	}
   }
 .test-background {
