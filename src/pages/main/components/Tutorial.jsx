@@ -11,7 +11,7 @@ import cough_standing from '../../../assets/images/cough_stand.png';
 import {ReactComponent as FartWind} from '../../../assets/images/fart_wind2.svg'
 import {ReactComponent as CaughSound} from '../../../assets/images/caugh_sound.svg'
 import { useEffect } from 'react';
-import { useBGMStore } from "../../../store/backgroundSound";
+import {useBGMStore } from "../../../store/backgroundSound";
 import tutorialBitSound from '../../../assets/audio/tutorial_background.mp3'
 import { Howl } from 'howler';
 import sneezeSound from '../../../assets/audio/sneeze.mp3'; // 경로 주의
@@ -66,9 +66,9 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	const isProcessingRef3 = useRef(false);
 	const isProcessingRef4 = useRef(false);
 	const timerRefs = useRef([]);
-	const successEffect = new Howl({ src: [successSound], volume: 0.1 });
-	const effect = new Howl({ src: [sneezeSound], preload:true, volume: 0.1 });
-	const failEffect = new Howl({ src: [failSound], volume: 0.1 });
+	const successEffect = new Howl({ src: [successSound] });
+	const effect = new Howl({ src: [sneezeSound], preload:true});
+	const failEffect = new Howl({ src: [failSound] });
 	const [isCoughClicked, setIsCoughClicked] = useState(false);
 	const [isFartClicked, setIsFartClicked] = useState(false);
 	const setAudio = useBGMStore(state => state.setAudio)
@@ -128,6 +128,18 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 		  processQueue4(); // 다음 작업 실행
 		}, 100);
 	  };
+	
+	useEffect(() => {
+	const handleKeyDown = (e) => {
+		if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
+		e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
+		handleNext();
+		}
+	};
+	window.addEventListener('keydown', handleKeyDown);
+	return () => window.removeEventListener('keydown', handleKeyDown);
+	}, [isTyping]);
+
 	useEffect(() => { // 배경음악 시작한 이후로 스페이스바가 들어오면 눌러야되는 타이밍 배열을 현재 인덱스로 검사해서 내가 누른 시간간격과 눌러야되는거랑 비교해서 성공/실패 판별하는거
 		if(isStart){
 			const handleKeyDown = (e) => {
@@ -271,7 +283,8 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 	  useEffect(() => {
 		if(!isStart) return;
 		const audio = new Audio(tutorialBitSound);
-		audio.volume = 1.0;
+		audioRef.current = audio; 
+		audio.volume = 0.9;
 		audio.onplay = () => {
 		  // 기준 시간 기록
 		  startTimeRef.current = performance.now();
@@ -299,7 +312,7 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 		};
 	  
 		audio.play().catch((err) => console.warn('autoplay blocked', err));
-		setAudio(audio);
+		//setAudio(audio);
 	  
 		return () => {
 		  timerRefs.current.forEach(clearTimeout);
@@ -326,14 +339,46 @@ const Tutorial = ({isBlackScreen,setIsBlackScreen, tutorial,  setStartGame, setT
 			style={{zIndex:5}} 
 			className={classNames("viewport", {'fade-in' : !isBlackScreen && tutorial}, {'fade-out' : !tutorial})}
 		>
+			<div style={{position:'absolute', display:'flex', top:7, right:20, zIndex:999, fontFamily:'BMkkubulimTTF-Regular'}}>
+				<div style={{width:32, height:32, backgroundColor:'rgb(141,134,129)', borderRadius:5, display:'flex', justifyContent:'center', alignItems:'center'}}>
+					<div style={{width:24, height:24,border:'1px solid rgb(164, 159, 154)', display:'flex',color:'rgb(205, 201, 191)', backgroundColor:'rgb(167,161,157)', borderRadius:2,fontSize:14, justifyContent:'center', alignItems:'flex-end'}}>
+						Esc
+					</div>
+				</div>
+				<div style={{fontSize:30, color:'rgb(141,134,129)',}}>&nbsp;: 튜토리얼 건너뛰기</div>
+			</div>
 			<div className={`comic-board zoom-tutorial`}>
 				{!isStart && 
 				<div style={{position:'absolute',backgroundColor:'rgb(239, 245, 246)', border:'1px solid #000', fontFamily:'BMkkubulimTTF-Regular', fontSize:25, zIndex:100, left:160, boxShadow:'1px 1px #000', top:100, width:800, height:100}}>
-					<div onClick={() => handleNext()} style={{cursor:'pointer',position:'relative', color:'rgb(34, 41, 61)', width:'100%', height:'100%', border:'1px solid #fff'}}>
-						<div style={{marginTop: 25, marginLeft: 30}}>
-							{displayedText}
-						</div>
-						<AiFillCaretDown className='text-next-button'/>
+					<div
+					onClick={() => handleNext()}
+					style={{
+						cursor: 'pointer',
+						position: 'relative',
+						color: 'rgb(34, 41, 61)',
+						width: '100%',
+						height: '100%',
+						border: '1px solid #fff',
+						fontFamily: 'BMkkubulimTTF-Regular'
+					}}
+					>
+					<div style={{ marginTop: 25, marginLeft: 30 }}>
+						{displayedText}
+					</div>
+
+					{/* 아래 화살표 아이콘 */}
+					<AiFillCaretDown className='text-next-button' />
+
+					{/* 👇 스페이스/엔터 안내 문구 */}
+					<div style={{
+						position: 'absolute',
+						bottom: 10,
+						right: 20,
+						fontSize: 16,
+						color: 'rgb(141,134,129)',
+						fontStyle: 'italic'
+					}}>
+					</div>
 					</div>
 				</div>}
 				{isStart && 
