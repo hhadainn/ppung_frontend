@@ -114,8 +114,8 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 		  processQueue2(); // 다음 작업 실행
 		}, 100);
 	  };
-	  const handleUpdateScore = () => {
-		mutateUpdateScore({email: email, score: scoreRef.current})
+	  const handleUpdateScore = (score) => {
+		mutateUpdateScore({email: email, score: score})
 	  }
 	  const {mutate: mutateUpdateScore, isPending: loadingUpdateScore} = useMutateUpdateScore({
 		onSuccess:(data) => {
@@ -175,6 +175,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 		currentIndexRef.current = 0;
 		coughSlotIndexRef.current = 0;
 		betweenTimeRef.current = 1.8;
+		scoreRef.current = 0;
 		queueRef.current = []
 		queueRef2.current = []
 		queueRef3.current = []
@@ -258,7 +259,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 							setCurrentClick('Poor')
 						}
 						if (index >= emojiTimings.length) {
-							handleUpdateScore() // 1초 후 ending으로 이동
+							handleUpdateScore(scoreRef.current) // 1초 후 ending으로 이동
 							return;
 						}
 						if (currentFailureTimer.current) clearTimeout(currentFailureTimer.current); // ⛔ 중복 방지
@@ -334,7 +335,7 @@ const InGame = ({zoomState,isEnding,setIsStart,setPlusText, setScore, setZoomSta
 				return 0
 			})
 			if (index >= emojiTimings.length) {
-				handleUpdateScore()
+				handleUpdateScore(scoreRef.current)
 				return;
 			}
 			currentIndexRef.current += 1;

@@ -53,10 +53,6 @@ const Main = () => {
 			setIsStart(true)
 		},1000)
 	}
-	useEffect(() => {
-		const item = window.localStorage.getItem('ppung_email')
-		setEmail(item)
-	},[])
 	// const handleKeyDown = (e) => {
 	// 	if (e.code === 'Space' || e.key === ' ' || e.code === 'Enter'&& !isTyping) {
 	// 	e.preventDefault(); // 기본 동작 방지 (예: 스크롤, 폼 제출)
@@ -76,6 +72,8 @@ const Main = () => {
 	},[tutorial, isClicked])
 	useEffect(() => {
 		if(play === 'true'){
+			const item = window.localStorage.getItem('ppung_email')
+			setEmail(item)
 			setIsClicked(true);
 			searchParams.set('play', 'false')
 			setSearchParams(searchParams)

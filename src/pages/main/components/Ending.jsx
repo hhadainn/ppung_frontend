@@ -43,7 +43,7 @@ const Ending = ({score,email, ending, reStartGame}) => {
 			<img src={imageSrc} alt="ending character" className={imageClass} />
 			</div>
 
-			<button className="retry-btn" onClick={reStartGame}>
+			<button className="retry-btn" onClick={() => {reStartGame(); setShowRanking(false)}}>
 			다시 플레이하기
 			</button>
 			<p className="ranking-text" onClick={() => {invalidQuery({queryKey: ['rank']}); setShowRanking(true)}} style={{ cursor: 'pointer' }}>
@@ -85,7 +85,7 @@ const Ending = ({score,email, ending, reStartGame}) => {
 				</div>
 			))}
 			</div>
-			<button className="retry-btn" onClick={reStartGame}>
+			<button className="retry-btn" onClick={() => {reStartGame();  setShowRanking(false)}}>
 			다시 플레이하기
 			</button>
 		</div>

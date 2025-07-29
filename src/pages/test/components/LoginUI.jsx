@@ -44,6 +44,7 @@ const LoginUI = () => {
 	const {mutate: mutateLogin, isPending: loadingLogin} = useMutateLogin({
 		onSuccess:(data) => {
 			if (data.message === 'success') {
+				window.localStorage.removeItem('ppung_email')
 				window.localStorage.setItem('ppung_email', data.email)
 				AlertToast({toastId:'login',text: '로그인 성공', type:'success'});
 				pauseBackgroundSound(); 
@@ -67,6 +68,8 @@ const LoginUI = () => {
 		if (data.message === 'exist') {
 			AlertToast({toastId:'login',text: '이미 존재합니다', isWarnIcon: true, type:'warn'});
 		  } else {
+			window.localStorage.removeItem('ppung_email')
+			window.localStorage.setItem('ppung_email', data.email)
 			AlertToast({toastId:'login',text: '계정 생성 성공', type:'success'});
 			pauseBackgroundSound(); 
 			navigate('/main?play=true');
